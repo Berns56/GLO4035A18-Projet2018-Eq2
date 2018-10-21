@@ -4,7 +4,8 @@ import re
 try:
     schema = Util.loaderFicherJSON("schema.json")
     data = Util.loaderFicherJSON("data.json")
-    jsonschema.validate(data,schema)
+    
+    jsonschema.Draft3Validator(schema).is_valid(data)
     print(Util.validerFormat(data))
     print(Util.validerTotal(data))
    
