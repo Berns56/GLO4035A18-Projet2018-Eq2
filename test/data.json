@@ -1,0 +1,13 @@
+
+{
+	"_id": {
+		"$oid": "5bcbb49e94e72f00015ea2d7"
+	},
+	"date": "20 March 2018",
+	"item": "Consumable - HE - Baume du Perou",
+	"qte": "15",
+	"unit": "ml",
+	"total": "11.21",
+	"stotal": "9.75",
+	"tax": "1.46"
+}

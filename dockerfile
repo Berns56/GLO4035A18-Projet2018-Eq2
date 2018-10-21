@@ -8,7 +8,7 @@ WORKDIR /
 ADD requirements.txt /
 
 # Installer les packages Python nécessaires dans requirements.txt
-RUN pip install -r requirements.txt
+RUN pip install --trusted-host pypi.python.org -r requirements.txt
 
 # Copier le code de l’application dans le répertoire /
 ADD . /
