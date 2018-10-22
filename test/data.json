@@ -11,3 +11,12 @@
 	"stotal": "9.75",
 	"tax": "1.46"
 }
+
+{
+	'date': '20 January 2018', 
+	'item': 'Consumable - HE - Gardenia',
+	 'qte': '30', 'unit': 'ml', 
+	 'total': '9.92', 
+	 'stotal': '8.63', 
+	 'tax': '1.29'
+}

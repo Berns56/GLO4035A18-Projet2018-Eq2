@@ -23,3 +23,5 @@ def validerFormat(dataJson):
     return True
 def validerTotal(dataJson):
     return float(dataJson["total"]) == float(dataJson["stotal"])+float(dataJson["tax"])
+def testing(Moi):
+    return Moi+"Toi"

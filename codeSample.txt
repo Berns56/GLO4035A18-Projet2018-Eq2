@@ -1,0 +1,26 @@
+ try:
+                        print(data)
+                        jsonschema.validate(data,schema)
+                        for target_list in data:
+                                if Util.validerFormat(target_list) and Util.validerTotal(target_list):
+                                        result.append(target_list)
+                                else:
+                                        result.append(404)
+                        for item in data:
+                                if(item == 404):
+                                        print(item)
+
+
+                except Exception as e:
+                        return(e)
+
+
+       
+        try:
+                if request.headers['Content-Type']=="application/json":
+                        data = request.get_json()
+                        schema = Util.loaderFicherJSON("schema.json")
+                        result= []
+        except Exception as e:
+                print(e)
+    

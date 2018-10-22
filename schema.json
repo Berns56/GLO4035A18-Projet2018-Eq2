@@ -2,16 +2,15 @@
   "description": "un produit de savon",
   "type":"object",
   "properties":{
-    "_id":{
-        "$oid": {"type":"string"}
-    },
-    "date": {"type":"date"},
+   
+    "date": {"type":"string"},
     "item": {"type":"string"},
-    "qte": {"type":"int"},
-      "unit":  {"type":"string"},
-      "total": {"type":"number"},
-      "stotal": {"type":"number"},
-      "tax": {"type": "number"}
-  }
+    "qte": {"type":"string"},
+    "unit":  {"type":"string"},
+      "total": {"type":"string"},
+      "stotal": {"type":"string"},
+      "tax": {"type": "string"}
+  },
+  "required":["date","item","qte", "unit","total","stotal","tax"]
   
 }

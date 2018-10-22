@@ -1,44 +1,62 @@
-from flask import Flask, request,abort
+from flask import Flask, request,abort,jsonify,Response
 from flask_pymongo import PyMongo
 from bson.json_util import dumps
 import jsonschema
+import json
 import Util
-application = Flask("my_glo4035_application")
-application.config['MONGO_HOST'] = 'ds237563.mlab.com'
-application.config['MONGO_PORT'] = '37563'
-application.config['MONGO_DBNAME'] = 'soap-inventory'
-application.config['MONGO_USERNAME'] = 'admin'
-application.config['MONGO_PASSWORD'] = 'zxcv12345'
-application.config['MONGO_AUTH_SOURCE'] = 'admin'
 
+application = Flask("my_glo4035_application")
 application.config["MONGO_URI"] = "mongodb://admin:zxcv12345@ds237713.mlab.com:37713/soap-inventory"
-##application.config["MONGO_URI"] = 'mongodb://'+application.config["MONGO_USERNAME"]+":"+application.config['MONGO_PASSWORD']+"@"+application.config['MONGO_HOST']+":"+application.config['MONGO_PORT'] +"/"+application.config['MONGO_DBNAME']
 mongoDb = PyMongo(application)
 transactDb = mongoDb.db.transactions
+Densenty = mongoDb.db.densitySoap
 
 @application.route("/", methods=["GET"])
 def index():
-    return "Accueil"
+        return abort(400,description="Format Incorrect")
+  
+
+@application.route("/InsertionTransaction", methods=["GET","POST"])
+def Insertions_transactions():
+        if request.is_json:
+               fichierJSON = request.get_json()
+               dataSoap = []
+               data.append(json.dumps(fichierJSON))
+               schema = Util.loaderFicherJSON("schema.json")
+               isDateField="date"
+               itemDict = {}
+               for key,value in fichierJSON.items():
+                       if key == isItemField:
+                               itemDict[key]=value
+                               isDateField=key
+                       else:
+                               dataSoap.append(itemDict)
+                               itemDict.clear()
+                               itemDict[key]=value
+
+
+
+                                               
+            
+                      
+        else:
+                return abort(400,description="Format JSOn Incorrect")
+        return "200 Format JSON Correct"
+            
+               
 
 @application.route("/transactions", methods=["POST"])
 def import_transactions():
-        if request.headers['Content-Type'] == "application/json":
-                data = request.get_json()
-                schema = Util.loaderFicherJSON("schema.json")
-                for target_list in data:
-                        if jsonschema.Draft3Validator(schema).is_valid(target_list)==False:
-                                return "400 JSON INVALID"
-                        elif Util.validerFormat(target_list)==False:
-                                return "400 Format de donnée Invalid"
-                        elif Util.validerTotal(target_list)==False:
-                                return "400 total est différent de stotal+tax"
-                else:
-                     transactDb.insertOne(data)
-                     return "200"   
-
+    if request.headers['Content-Type'] == "application/json":
+        data = request.get_json()
+        transactDb.insert_one(data)
 @application.route("/transactions", methods=["GET"])
 def display_transactions():
     return dumps(transactDb.find())
+
+@application.errorhandler(400)
+def format_JSON_incorrect(e):
+        return "{},{}".format(400,e.description)
 
 
 if __name__ ==  "__main__":
