@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Main Savon</title>
+</head>
+
+<style>
+    /*---------Base-------*/
+header{
+    display: block;
+    width: 100%;
+}
+
+header ul {
+    width: 100%;
+}
+
+header li {
+    display: inline;
+}
+
+header li a {
+    width: 100px;
+    background-color: #ccffff;
+    padding: 1% 5%;
+    border: 1px solid black;
+    color:black;
+    size: 15px;
+}
+
+header li a:hover {
+    background: #cc0000;
+    text-decoration: underline ;
+    cursor: pointer;
+}
+</style>
+
+<script>
+    function load(){
+        let host = window.location.hostname;
+
+        document.querySelector("#li_Inventory").addEventListener('click', function (event) {
+            window.location.href = "/transactions"
+        });
+    }
+</script>
+
+<body onload="load()">
+    <header>
+            <ul>
+                <li id="li_Home">
+                    <a>Home</a>
+                </li>
+                <li id="li_Inventory">
+                    <a>Inventory</a>
+                </li>
+                <li id="li_AddItem">
+                    <a>Add item</a>
+                </li>
+                <li id="li_TotalCost">
+                    <a>Total cost</a>
+                </li>
+                <li id="li_AvgCost">
+                    <a>Average Acquisition cost</a>
+                </li>
+                <li id="li_Image">
+                    <a>Past images</a>
+                </li>
+            </ul>
+    </header>
+
+    <h1>SoapInventory Inc.</h1>
+    <h2>East. 1993</h2>
+    <p>Welcome</p>
+    <img src="https://buildingmarkets.org/blogs/files/2011/07/soap.gif" />
+</body>
+</html>
