@@ -24,6 +24,8 @@ def display_transactionsHtml():
 def display_transactionsList():
     return dumps(transactDb.find())
 
+
+
 @application.route("/transactions", methods=["POST"])
 def import_transactions():
     if (request.headers['Content-Type'] == "application/json"):
@@ -80,6 +82,16 @@ def delete_transactions():
             return jsonify(result = "Success", status = "200", message = "Database emptied!"), 200
         else:
             return jsonify(result = "Failure", status = "401", message = "Wrong password!"), 401
+@application.route("/transactions",methods=["GET","POST"])
+def insert_transactions():
+    if (request.headers['Content-Type']=="application/json"):
+        dataJSON = request.get_json()
+        if(jsonschema.Draft3Validator(schema_resources.SCHEMA_SOAP_PRODUCT).is_valid(dataJSON)==False:
+             abort(400, description = "Format JSON incorrect pour l'entrée {}".format(str(item)))
+        else:
+            transactDb.insert_one(dataJSON)
+            return jsonify(result="Succes",status="200",message="Itend sended"),200
+
 
 if __name__ ==  "__main__":
     application.run(host="0.0.0.0", port = 80)
