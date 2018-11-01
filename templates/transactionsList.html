@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Transactions</title>
+</head>
+
+<style>
+    /*---------Base-------*/
+header{
+    display: block;
+    width: 100%;
+}
+
+header ul {
+    width: 100%;
+}
+
+header li {
+    display: inline;
+}
+
+header li a {
+    width: 100px;
+    background-color: #ccffff;
+    padding: 1% 5%;
+    border: 1px solid black;
+    color:black;
+    size: 15px;
+}
+
+header li a:hover {
+    background: #cc0000;
+    text-decoration: underline ;
+    cursor: pointer;
+}
+</style>
+
+<script type="text/javascript">
+
+    function ajax_get(url, callback) {
+        let xmlhttp = new XMLHttpRequest();
+        xmlhttp.onreadystatechange = function() {
+            if (xmlhttp.readyState == 4 && xmlhttp.status == 200) {
+                console.log('responseText:' + xmlhttp.responseText);
+                try {
+                    var data = JSON.parse(xmlhttp.responseText);
+                } catch(err) {
+                    console.log(err.message + " in " + xmlhttp.responseText);
+                    return;
+                }
+                callback(data);
+            }
+        };
+ 
+        xmlhttp.open("GET", url, true);
+        xmlhttp.send();
+    }
+    
+    function load(){
+        let host = window.location.hostname;
+
+        document.querySelector("#li_Inventory").addEventListener('click', function (event) {
+            window.location.href = "/transactions"
+        });
+
+        ajax_get('/transactions/list', function(data) {
+            console.log(data)
+            document.querySelector("divTransactions").innerHTML = JSON.parse(data)
+        });
+    } 
+
+</script>
+
+<body onload="load()">
+    <header>
+            <ul>
+                <li id="li_Home">
+                    <a>Home</a>
+                </li>
+                <li id="li_Inventory">
+                    <a>Inventory</a>
+                </li>
+                <li id="li_AddItem">
+                    <a>Add item</a>
+                </li>
+                <li id="li_TotalCost">
+                    <a>Total cost</a>
+                </li>
+                <li id="li_AvgCost">
+                    <a>Average Acquisition cost</a>
+                </li>
+                <li id="li_Image">
+                    <a>Past images</a>
+                </li>
+            </ul>
+    </header>
+
+    <h1>Transactions</h1>
+    
+    <div id="divTransactions"></div>
+</body>
+</html>

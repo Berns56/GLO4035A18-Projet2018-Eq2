@@ -1,4 +1,4 @@
-from flask import Flask, request, jsonify, abort, send_from_directory
+from flask import Flask, request, jsonify, abort, send_from_directory, render_template
 from flask_pymongo import PyMongo
 from bson.json_util import dumps
 import hashlib
@@ -14,10 +14,14 @@ densityDb = mongoDb.db.densitySoap
 
 @application.route("/", methods=["GET"])
 def index():
-     return send_from_directory('/Forms', 'main.html')
+     return send_from_directory('/templates', 'main.html')
 
 @application.route("/transactions", methods=["GET"])
-def display_transactions():
+def display_transactionsHtml():
+    return send_from_directory('/templates', 'transactionsList.html')
+
+@application.route("/transactions/list", methods=["GET"])
+def display_transactionsList():
     return dumps(transactDb.find())
 
 @application.route("/transactions", methods=["POST"])
