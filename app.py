@@ -1,4 +1,4 @@
-from flask import Flask, request, jsonify, abort
+from flask import Flask, request, jsonify, abort, send_from_directory, render_template
 from flask_pymongo import PyMongo
 from bson.json_util import dumps
 import hashlib
@@ -8,9 +8,9 @@ application = Flask("my_glo4035_application")
 application.config["MONGO_URI"] = "mongodb://admin:admin123@ds237563.mlab.com:37563/soap-inventory"
 mongoDb = PyMongo(application)
 transactDb = mongoDb.db.transactions
-purchasesDb = transactDb.purchases
-densitiesDb = transactDb.densities
-laborsDb = transactDb.labors
+purchasesDb = transactDb.purchases ##
+densitiesDb = transactDb.densities ##
+laborsDb = transactDb.labors##
 
 @application.route("/", methods=["GET"])
 def index():
@@ -20,9 +20,17 @@ def index():
 def display_transactionsHtml():
     return send_from_directory('/templates', 'transactionsList.html')
 
-@application.route("/transactions/list", methods=["GET"])
-def display_transactionsList():
-    return dumps(transactDb.find())
+@application.route("/transactions/purchases", methods=["GET"])
+def display_purchases():
+    return dumps(purchasesDb.find())
+
+@application.route("/transactions/densities", methods=["GET"])
+def display_densities():
+    return dumps(densitiesDb.find())
+
+@application.route("/transactions/labors", methods=["GET"])
+def display_labors():
+    return dumps(laborsDb.find())
 
 @application.route("/transactions", methods=["POST"])
 def import_transactions():
