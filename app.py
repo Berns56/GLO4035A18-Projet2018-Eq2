@@ -67,7 +67,7 @@ def import_transactions():
         return jsonify(result = "Failure", status = "400", message = "Wrong content type!"), 400
 
 @application.route("/transactions/add/purchase",methods=["POST,GET"])
-def add_purchase():
+def add_Purchase():
     if(request.headers['Content-Type']=="application/json"):
         purchase = request.get_json()
         if(utilities.schemaSoapValidation(purchase,utilities.SCHEMA_SOAP_PURCHASE)):
@@ -80,7 +80,7 @@ def add_purchase():
 
 
 @application.route("/transactions/add/density",methods=["POST,GET"])
-def add_density():
+def add_Density():
     if(request.headers['Content-Type']=="application/json"):
         purchase = request.get_json()
         if(utilities.schemaSoapValidation(purchase,utilities.SCHEMA_SOAP_DENSITY)):
@@ -93,7 +93,7 @@ def add_density():
 
 
 @application.route("/transactions/add/labor",methods=["POST,GET"])
-def add_purchase():
+def add_Labor():
     if(request.headers['Content-Type']=="application/json"):
         purchase = request.get_json()
         if(utilities.schemaSoapValidation(purchase,utilities.SCHEMA_SOAP_LABOR)):
