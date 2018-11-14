@@ -44,6 +44,8 @@ def display_densities():
 def display_labors():
     return dumps(laborsDb.find())
 
+
+
 @application.route("/transactions", methods=["POST"])
 def import_transactions():
     if (request.headers['Content-Type'] == "application/json"):
@@ -63,6 +65,44 @@ def import_transactions():
             return jsonify(result = "Failure", status = "400", message = "Wrong content format!"), 400
     else:
         return jsonify(result = "Failure", status = "400", message = "Wrong content type!"), 400
+
+@application.route("/transactions/add/purchase",methods=["POST,GET"])
+def add_purchase():
+    if(request.headers['Content-Type']=="application/json"):
+        purchase = request.get_json()
+        if(utilities.schemaSoapValidation(purchase,utilities.SCHEMA_SOAP_PURCHASE)):
+            purchasesDb.insert_one(purchase)
+        else:
+            return jsonify(result="Failure",status="400",message="Purchase has the wrong content type!"),400
+    else:
+        return jsonify(result="Failure",status="400",message="Wrong content type!"),400    
+    return jsonify(result = "Success", status = "200", message = "Purchase add"), 200
+
+
+@application.route("/transactions/add/density",methods=["POST,GET"])
+def add_density():
+    if(request.headers['Content-Type']=="application/json"):
+        purchase = request.get_json()
+        if(utilities.schemaSoapValidation(purchase,utilities.SCHEMA_SOAP_DENSITY)):
+            purchasesDb.insert_one(purchase)
+        else:
+            return jsonify(result="Failure",status="400",message="Density has the wrong content type!"),400
+    else:
+        return jsonify(result="Failure",status="400",message="Wrong content type!"),400    
+    return jsonify(result = "Success", status = "200", message = "Density add"), 200
+
+
+@application.route("/transactions/add/labor",methods=["POST,GET"])
+def add_purchase():
+    if(request.headers['Content-Type']=="application/json"):
+        purchase = request.get_json()
+        if(utilities.schemaSoapValidation(purchase,utilities.SCHEMA_SOAP_LABOR)):
+            purchasesDb.insert_one(purchase)
+        else:
+            return jsonify(result="Failure",status="400",message="Labor has the wrong content type!"),400
+    else:
+        return jsonify(result="Failure",status="400",message="Wrong content type!"),400    
+    return jsonify(result = "Success", status = "200", message = "Labor add"), 200
 
 @application.route("/transactions", methods=["DELETE"])
 def delete_transactions():
