@@ -20,6 +20,18 @@ def index():
 def display_transactionsHtml():
     return send_from_directory('/templates', 'transactionsList.html')
 
+@application.route("/transactions/modifyPurchase", methods=["GET"])
+def display_modifyPurchaseHtml():
+    return send_from_directory('/templates', 'modifyPurchase.html')
+
+@application.route("/transactions/modifyDensity", methods=["GET"])
+def display_modifyDensityHtml():
+    return send_from_directory('/templates', 'modifyDensity.html')
+
+@application.route("/transactions/modifyLabors", methods=["GET"])
+def display_modifyLaborsHtml():
+    return send_from_directory('/templates', 'modifyLabors.html')
+
 @application.route("/transactions/purchases", methods=["GET"])
 def display_purchases():
     return dumps(purchasesDb.find())

@@ -85,11 +85,12 @@ td{
         });
 
         getPurchases()
-        getdensities()
-        getlabors()   
+        getDensities()
+        getLabors()   
     } 
 
     function getPurchases(){
+        let listId = []
         ajax_get('/transactions/purchases', function(data) {
             let resultContainer = document.querySelector("#divAchat")
             let html = []
@@ -108,22 +109,50 @@ td{
 
             data.forEach(element => {
                 html.push("<tr id=\"purchase"+element._id.$oid+"\">")   
-                html.push("<td id=\"id"+element._id.$oid+"\">"+element._id.$oid+"</td>")
-                html.push("<td id=\"item"+element._id.$oid+"\">"+element.item+"</td>")
-                html.push("<td class=\"center\" id=\"unit"+element._id.$oid+"\">"+element.unit+"</td>")
-                html.push("<td class=\"center\" id=\"qte"+element._id.$oid+"\">"+element.qte+"</td>")
-                html.push("<td class=\"center\" id=\"stotal"+element._id.$oid+"\">"+element.stotal+"$</td>")
-                html.push("<td class=\"center\" id=\"tax"+element._id.$oid+"\">"+element.tax+"$</td>")
-                html.push("<td class=\"center\" id=\"total"+element._id.$oid+"\">"+element.total+"$</td>")
-                html.push("<td class=\"center\"><button type='button' id=\"btnModify" + element._id.$oid + "\">Modify</button></td>")
-                html.push("<tr>")    
+                html.push("<td id=\"purchaseId"+element._id.$oid+"\">"+element._id.$oid+"</td>")
+                html.push("<td id=\"purchaseItem"+element._id.$oid+"\">"+element.item+"</td>")
+                html.push("<td class=\"center\" id=\"purchaseUnit"+element._id.$oid+"\">"+element.unit+"</td>")
+                html.push("<td class=\"center\" id=\"purchaseQte"+element._id.$oid+"\">"+element.qte+"</td>")
+                html.push("<td class=\"center\" id=\"purchaseStotal"+element._id.$oid+"\">"+element.stotal+" $</td>")
+                html.push("<td class=\"center\" id=\"purchaseTax"+element._id.$oid+"\">"+element.tax+" $</td>")
+                html.push("<td class=\"center\" id=\"purchaseTotal"+element._id.$oid+"\">"+element.total+" $</td>")
+                html.push("<td class=\"center\"><button type='button' id=\"btnModifyPurchase" + element._id.$oid + "\">Modify</button></td>")
+                html.push("<tr>")  
+
+                listId.push(element._id.$oid)  
             });
             html.push("</table>")
             resultContainer.insertAdjacentHTML("beforeend", html.join("\n"))
+
+            listId.forEach(id => {
+                document.querySelector("#btnModifyPurchase"+id).addEventListener('click', function (event) {
+                    modifyPurchase(id)
+                });
+            })
         });
     }
 
-    function getdensities(){
+    function modifyPurchase(id){
+        let item = document.querySelector("#purchaseItem"+id).innerHTML
+        let unit = document.querySelector("#purchaseUnit"+id).innerHTML
+        let qte = document.querySelector("#purchaseQte"+id).innerHTML
+        let stotal = document.querySelector("#purchaseStotal"+id).innerHTML
+        let tax = document.querySelector("#purchaseTax"+id).innerHTML
+        let total = document.querySelector("#purchaseTotal"+id).innerHTML
+
+        localStorage.setItem("id",id)
+        localStorage.setItem("item",item)
+        localStorage.setItem("unit",unit)
+        localStorage.setItem("qte",qte)
+        localStorage.setItem("stotal",stotal)
+        localStorage.setItem("tax",tax)
+        localStorage.setItem("total",total)
+
+        window.location.href = "/transactions/modifyPurchase"
+    }
+
+    function getDensities(){
+        let listId = []
         ajax_get('/transactions/densities', function(data) {
             let resultContainer = document.querySelector("#divDensity")
             let html = []
@@ -139,24 +168,46 @@ td{
 
             data.forEach(element => {
                 html.push("<tr id=\"density"+element._id.$oid+"\">")   
-                html.push("<td id=\"id"+element._id.$oid+"\">"+element._id.$oid+"</td>")
-                html.push("<td id=\"item"+element._id.$oid+"\">"+element.item+"</td>")
-                html.push("<td class=\"center\" id=\"g"+element._id.$oid+"\">"+element.g+"</td>")
-                html.push("<td class=\"center\" id=\"ml"+element._id.$oid+"\">"+element.ml+"</td>")
-                html.push("<td class=\"center\"><button type='button' id=\"btnModify" + element._id.$oid + "\">Modify</button></td>")
-                html.push("<tr>")    
+                html.push("<td id=\"densityId"+element._id.$oid+"\">"+element._id.$oid+"</td>")
+                html.push("<td id=\"densityItem"+element._id.$oid+"\">"+element.item+"</td>")
+                html.push("<td class=\"center\" id=\"densityG"+element._id.$oid+"\">"+element.g+"</td>")
+                html.push("<td class=\"center\" id=\"densityMl"+element._id.$oid+"\">"+element.ml+"</td>")
+                html.push("<td class=\"center\"><button type='button' id=\"btnModifyDensity" + element._id.$oid + "\">Modify</button></td>")
+                html.push("<tr>")   
+                
+                listId.push(element._id.$oid)   
             });
             html.push("</table>")
             resultContainer.insertAdjacentHTML("beforeend", html.join("\n"))
+
+            listId.forEach(id => {
+                document.querySelector("#btnModifyDensity"+id).addEventListener('click', function (event) {
+                    modifyDensity(id)
+                });
+            })
         });
     }
+    
+    function modifyDensity(id){
+        let item = document.querySelector("#densityItem"+id).innerHTML
+        let g = document.querySelector("#densityG"+id).innerHTML
+        let ml = document.querySelector("#densityMl"+id).innerHTML
 
-    function getlabors(){
+        localStorage.setItem("id",id)
+        localStorage.setItem("item",item)
+        localStorage.setItem("g",g)
+        localStorage.setItem("ml",ml)
+        
+        window.location.href = "/transactions/modifyDensity"
+    }
+
+    function getLabors(){
+        let listId = []
         ajax_get('/transactions/labors', function(data) {
             let resultContainer = document.querySelector("#divTranformation")
             let html = []
             html.push("<table id=\"tableDensity\">")
-            html.push("<tr><td class=\"tableTitle\"  colspan='8'>Density</td></tr>")
+            html.push("<tr><td class=\"tableTitle\"  colspan='8'>Labors</td></tr>")
             html.push("<tr>")  
             html.push("<td class=\"title\">Id</td>")
             html.push("<td class=\"title\">Job Id</td>")
@@ -169,21 +220,48 @@ td{
             html.push("<tr>")
 
             data.forEach(element => {
-                html.push("<tr id=\"purchase"+element._id.$oid+"\">")   
-                html.push("<td id=\"id"+element._id.$oid+"\">"+element._id.$oid+"</td>")
-                html.push("<td class=\"center\" id=\"jobId"+element._id.$oid+"\">"+element.job_id+"</td>")
-                html.push("<td id=\"item"+element._id.$oid+"\">"+element.item+"</td>")
-                html.push("<td id=\"g"+element._id.$oid+"\">"+element.date+"</td>")
-                html.push("<td class=\"center\" id=\"ml"+element._id.$oid+"\">"+element.unit+"</td>")
-                html.push("<td class=\"center\" id=\"ml"+element._id.$oid+"\">"+element.qte+"</td>")
-                html.push("<td id=\"ml"+element._id.$oid+"\">"+element.type+"</td>")
-                html.push("<td class=\"tdBtnModify\"><button type='button' id=\"btnModify" + element._id.$oid + "\">Modify</button></td>")
-                html.push("<tr>")    
+                html.push("<tr id=\"labors"+element._id.$oid+"\">")   
+                html.push("<td id=\"laborsId"+element._id.$oid+"\">"+element._id.$oid+"</td>")
+                html.push("<td class=\"center\" id=\"laborsJobId"+element._id.$oid+"\">"+element.job_id+"</td>")
+                html.push("<td id=\"laborsItem"+element._id.$oid+"\">"+element.item+"</td>")
+                html.push("<td id=\"laborsG"+element._id.$oid+"\">"+element.date+"</td>")
+                html.push("<td class=\"center\" id=\"laborsMl"+element._id.$oid+"\">"+element.unit+"</td>")
+                html.push("<td class=\"center\" id=\"laborsQte"+element._id.$oid+"\">"+element.qte+"</td>")
+                html.push("<td id=\"laborsType"+element._id.$oid+"\">"+element.type+"</td>")
+                html.push("<td class=\"center\"><button type='button' id=\"btnModifyLabors" + element._id.$oid + "\">Modify</button></td>")
+                html.push("<tr>") 
+
+                listId.push(element._id.$oid)   
             });
             html.push("</table>")
             resultContainer.insertAdjacentHTML("beforeend", html.join("\n"))
+            listId.forEach(id => {
+                document.querySelector("#btnModifyLabors"+id).addEventListener('click', function (event) {
+                    modifyLabors(id)
+                });
+            })
         });
     }
+
+    function modifyLabors(id){
+        let jobId = document.querySelector("#laborsJobId"+id).innerHTML
+        let item = document.querySelector("#laborsItem"+id).innerHTML
+        let g = document.querySelector("#laborsG"+id).innerHTML
+        let ml = document.querySelector("#laborsMl"+id).innerHTML
+        let qte = document.querySelector("#laborsQte"+id).innerHTML
+        let type = document.querySelector("#laborsType"+id).innerHTML
+
+        localStorage.setItem("id",id)
+        localStorage.setItem("item",item)
+        localStorage.setItem("g",g)
+        localStorage.setItem("ml",ml)        
+        localStorage.setItem("qte",qte)
+        localStorage.setItem("type",type)
+
+        window.location.href = "/transactions/modifyLabors"
+    }
+
+
 </script>
 
 <body onload="load()">
