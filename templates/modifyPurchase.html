@@ -8,7 +8,7 @@
 <style>
     /*---------Base-------*/
 header{
-    display: block;
+    display: flex;
     width: 100%;
 }
 
@@ -40,6 +40,23 @@ header li a:hover {
 <script type="text/javascript">
 
     function load(){
+        document.querySelector("#selectionHE").style.display = "none"
+        document.querySelector("#selectionBaseOil").style.display = "none"
+        document.querySelector("#otherConsumable").style.display = "none"
+
+        document.querySelector("#selectConsumable").addEventListener('change', function (event) {
+            checkSelections()
+        })
+
+        document.querySelector("#tbPurchaseStotal").addEventListener('change', function (event) {
+            calculTotal()
+        })
+
+         document.querySelector("#tbPurchaseTax").addEventListener('change', function (event) {
+            calculTotal()
+        })
+        
+
         let id = localStorage.getItem("id")
         let item = localStorage.getItem("item")
         let unit = localStorage.getItem("unit")
@@ -48,16 +65,63 @@ header li a:hover {
         let tax = localStorage.getItem("tax")
         let total = localStorage.getItem("total")
 
-        localStorage.clear()
+        //localStorage.clear()
 
-        document.querySelector("#tbPurchaseId").innerHTML = id
-        document.querySelector("#tbPurchaseId").innerHTML = item
-        document.querySelector("#tbPurchaseId").innerHTML = unit
-        document.querySelector("#tbPurchaseId").innerHTML = qte
-        document.querySelector("#tbPurchaseId").innerHTML = stotal
-        document.querySelector("#tbPurchaseId").innerHTML = tax
-        document.querySelector("#tbPurchaseId").innerHTML = total
+        document.querySelector("#tbPurchaseId").value = id
+        document.querySelector("#tbPurchaseQte").value = qte
+        document.querySelector("#tbPurchaseStotal").value = stotal
+        document.querySelector("#tbPurchaseTax").value = tax
+        document.querySelector("#tbPurchaseTotal").value = total
+        setItem(item)
+        setUnit(unit)
     } 
+    
+    function setItem(item){
+        let array = item.split(" - ")
+        document.querySelector("#selectConsumable").value = array[1] 
+        checkSelections()
+        if(document.querySelector("#selectConsumable").value == 1){
+            document.querySelector("#selectionHE").value = array[2] 
+        } else if(document.querySelector("#selectConsumable").value == 2){
+            document.querySelector("#selectionBaseOil").value = array[2] 
+        }
+
+    }
+
+    function setUnit(unit){
+        document.querySelector("#selectUnit").value = unit
+    }
+
+    function checkSelections(){
+        if(document.querySelector("#selectConsumable").value == "HE"){
+
+            document.querySelector("#selectionHE").style.display = "inline"
+            document.querySelector("#selectionBaseOil").style.display = "none"
+            document.querySelector("#otherConsumable").style.display = "inline"
+
+        } else if(document.querySelector("#selectConsumable").value == "Base Oil"){
+
+            document.querySelector("#selectionHE").style.display = "none"
+            document.querySelector("#selectionBaseOil").style.display = "inline"
+            document.querySelector("#otherConsumable").style.display = "inline"
+
+        } else{
+            document.querySelector("#selectionHE").style.display = "none"
+            document.querySelector("#selectionBaseOil").style.display = "none"
+            document.querySelector("#otherConsumable").style.display = "none"
+        }
+    }
+
+    function calculTotal(){
+        let stotal = document.querySelector("#tbPurchaseStotal").value.replace(/\$/g,'').replace(/\ /g,'')
+        let tax = document.querySelector("#tbPurchaseTax").value.replace(/\$/g,'').replace(/\ /g,'')
+
+        let total = parseFloat(stotal) + parseFloat(tax)
+
+        document.querySelector("#tbPurchaseStotal").value = parseFloat(stotal).toFixed(2) + " $"
+        document.querySelector("#tbPurchaseTax").value = parseFloat(tax).toFixed(2) + " $"
+        document.querySelector("#tbPurchaseTotal").value = total.toFixed(2)  + " $"
+    }
 
 </script>
 
@@ -87,12 +151,64 @@ header li a:hover {
 
     <h1>Modify purchase</h1>
 
-    <label for="tbPurchaseId">Id: </label><input type="text" id="tbPurchaseId">
-    <label for="tbPurchaseItem">Item: </label><input type="text" id="tbPurchaseItem">
-    <label for="tbPurchaseUnit">Unit: </label><input type="text" id="tbPurchaseUnit">
-    <label for="tbPurchaseQte">qte: </label><input type="text" id="tbPurchaseQte">
-    <label for="tbPurchaseStotal">stotal: </label><input type="text" id="tbPurchaseStotal">
-    <label for="tbPurchaseTax">Tax: </label><input type="text" id="tbPurchaseTax">
-    <label for="tbPurchaseTotal">total: </label><input type="text" id="tbPurchaseTotal">
+    <label for="tbPurchaseId">Id: </label><input type="text" id="tbPurchaseId" disabled><br>
+    <label for="tbPurchaseItem">Item : Consumable - </label>
+    <select id="selectConsumable">
+        <option value="HE">HE</option>
+        <option value="Base Oil">Base Oil</option>
+        <option value="Additive">Additive</option>
+        <option value="Soude Caustique">Soude Caustique</option>
+        <option value="Emballage">Emballage</option>
+    </select>
+    <span id="otherConsumable"> - </span>
+    <select id = "selectionHE">
+        <option value = "Pin Blanc">Pin Blanc</option>
+        <option value = "Eucalyptus Radiata">Eucalyptus Radiata</option>
+        <option value = "Lavender">Lavender</option>
+        <option value = "Frangipani">Frangipani</option>
+        <option value = "Baume du Perou">Baume du Perou</option>
+        <option value = "Apple">Apple</option>
+        <option value = "Tea Tree">Tea Tree</option>
+        <option value = "Ylang Ylang">Ylang Ylang</option>
+        <option value = "Lemongrass">Lemongrass</option>
+        <option value = "Menthe Poivree">Menthe Poivree</option>
+        <option value = "Pepermint">Pepermint</option>
+        <option value = "Patchouli">Patchouli</option>
+        <option value = "Orange Douce">Orange Douce</option>
+        <option value = "Epinette Noire">Epinette Noire</option>
+        <option value = "Exotic">Exotic</option>
+        <option value = "Gardenia">Gardenia</option>
+        <option value = "Cedre Virginie">Cedre Virginie</option>
+        <option value = "Lime">Lime</option>
+        <option value = "Orange Amere">Orange Amere</option>
+        <option value = "Bergamote">Bergamote</option>
+        <option value = "Palmarosa">Palmarosa</option>
+        <option value = "Rosemary">Rosemary</option>
+    </select>
+    <select id = "selectionBaseOil">
+        <option value = "Cire Abeille">Cire Abeille</option>
+        <option value = "Olive Oil">Olive Oil</option>
+        <option value = "Jojoba Oil">Jojoba Oil</option>
+        <option value = "Castor Oil">Castor Oil</option>
+        <option value = "Argan Oil">Argan Oil</option>
+        <option value = "Cameline Oil">Cameline Oil</option>
+        <option value = "Coconut Oil">Coconut Oil</option>
+        <option value = "Palm Oil">Palm Oil</option>
+        <option value = "Shea Butter">Shea Butter</option>
+        <option value = "Sweet Almond Oil">Sweet Almond Oil</option>
+        <option value = "Coco Butter">Coco Butter</option>
+        <option value = "Avocado Oil">Avocado Oil</option>
+    </select>
+    <br>
+    <label for="tbPurchaseUnit">Unit: </label>
+    <select id="selectUnit">
+        <option value="ml">ml</option>
+        <option value="g">g</option>
+    </select>
+    <br>
+    <label for="tbPurchaseQte">Qte: </label><input type="text" id="tbPurchaseQte"><br>
+    <label for="tbPurchaseStotal">Stotal: </label><input type="text" id="tbPurchaseStotal"><br>
+    <label for="tbPurchaseTax">Tax: </label><input type="text" id="tbPurchaseTax"><br>
+    <label for="tbPurchaseTotal">total: </label><input type="text" id="tbPurchaseTotal" disabled><br>
 </body>
 </html>
