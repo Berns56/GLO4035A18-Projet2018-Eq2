@@ -21,34 +21,6 @@ def index():
 def display_transactionsHtml():
     return send_from_directory('/templates', 'transactionsList.html')
 
-@application.route("/transactions/modifyPurchase", methods=["GET"])
-def display_modifyPurchaseHtml():
-    return send_from_directory('/templates', 'modifyPurchase.html')
-
-@application.route("/transactions/modifyDensity", methods=["GET"])
-def display_modifyDensityHtml():
-    return send_from_directory('/templates', 'modifyDensity.html')
-
-@application.route("/transactions/modifyLabors", methods=["GET"])
-def display_modifyLaborsHtml():
-    return send_from_directory('/templates', 'modifyLabors.html')
-
-@application.route("/transactions/purchases", methods=["GET"])
-def display_purchases():
-    return dumps(purchasesDb.find())
-
-@application.route("/transactions/densities", methods=["GET"])
-def display_densities():
-    return dumps(densitiesDb.find())
-
-@application.route("/transactions/labors", methods=["GET"])
-def display_labors():
-    return dumps(laborsDb.find())
-
-@application.route("/transactions/add", methods=["GET"])
-def display_addTransactionsHtml():
-    return send_from_directory('/templates', 'addTransactions.html')
-
 @application.route("/transactions", methods=["POST"])
 def import_transactions():
     if (request.headers['Content-Type'] == "application/json"):
@@ -68,6 +40,37 @@ def import_transactions():
             return jsonify(result = "Failure", status = "400", message = "Wrong content format!"), 400
     else:
         return jsonify(result = "Failure", status = "400", message = "Wrong content type!"), 400
+
+@application.route("/transactions", methods=["DELETE"])
+def delete_transactions():
+    if (request.headers['Content-Type'] == "application/json"):
+        encryptedPassword = hashlib.md5(request.get_json()["password"].encode("utf-8")).hexdigest()
+        if (encryptedPassword == '0192023a7bbd73250516f069df18b500'):
+            transactDb.drop()
+            purchasesDb.drop()
+            densitiesDb.drop()
+            laborsDb.drop()
+            return jsonify(result = "Success", status = "200", message = "Database emptied!"), 200
+        else:
+            return jsonify(result = "Failure", status = "401", message = "Wrong password!"), 401
+
+
+@application.route("/transactions/purchases", methods=["GET"])
+def display_purchases():
+    return dumps(purchasesDb.find())
+
+@application.route("/transactions/densities", methods=["GET"])
+def display_densities():
+    return dumps(densitiesDb.find())
+
+@application.route("/transactions/labors", methods=["GET"])
+def display_labors():
+    return dumps(laborsDb.find())
+
+@application.route("/transactions/add", methods=["GET"])
+def display_addTransactionsHtml():
+    return send_from_directory('/templates', 'addTransactions.html')
+
 
 @application.route("/transactions/add/purchase",methods=["POST"])
 def add_Purchase():
@@ -107,18 +110,9 @@ def add_Labor():
         return jsonify(result="Failure",status="400",message="Wrong content type!"),400    
     return jsonify(result = "Success", status = "200", message = "Labor add"), 200
 
-@application.route("/transactions", methods=["DELETE"])
-def delete_transactions():
-    if (request.headers['Content-Type'] == "application/json"):
-        encryptedPassword = hashlib.md5(request.get_json()["password"].encode("utf-8")).hexdigest()
-        if (encryptedPassword == '0192023a7bbd73250516f069df18b500'):
-            transactDb.drop()
-            purchasesDb.drop()
-            densitiesDb.drop()
-            laborsDb.drop()
-            return jsonify(result = "Success", status = "200", message = "Database emptied!"), 200
-        else:
-            return jsonify(result = "Failure", status = "401", message = "Wrong password!"), 401
+@application.route("/transactions/modifyPurchase", methods=["GET"])
+def display_modifyPurchaseHtml():
+    return send_from_directory('/templates', 'modifyPurchase.html')
 
 @application.route("/transactions/modify/purchase", methods=["PUT"])
 def modify_Purchase():
@@ -134,6 +128,10 @@ def modify_Purchase():
             return str(e)
     return jsonify(result = "Success", status = "200", message = "Purchase modified"), 200
 
+@application.route("/transactions/modifyDensity", methods=["GET"])
+def display_modifyDensityHtml():
+    return send_from_directory('/templates', 'modifyDensity.html')
+
 @application.route("/transactions/modify/density", methods=["PUT"])
 def modify_Density():
     try:
@@ -148,6 +146,10 @@ def modify_Density():
             return str(e)
     return jsonify(result = "Success", status = "200", message = "Density modified"), 200
 
+@application.route("/transactions/modifyLabors", methods=["GET"])
+def display_modifyLaborsHtml():
+    return send_from_directory('/templates', 'modifyLabors.html')
+
 @application.route("/transactions/modify/labor", methods=["PUT"])
 def modify_Labor():
     try:
@@ -161,7 +163,6 @@ def modify_Labor():
     except Exception as e:
             return str(e)
     return jsonify(result = "Success", status = "200", message = "Density modified"), 200
-
 
 if __name__ ==  "__main__":
     application.run(host="0.0.0.0", port = 80)
