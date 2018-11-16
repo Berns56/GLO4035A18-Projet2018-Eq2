@@ -54,6 +54,10 @@ td{
     text-align: center;
 }
 
+button {
+    margin-bottom: 10px;
+}
+
 </style>
 
 <script type="text/javascript">
@@ -76,6 +80,23 @@ td{
         xmlhttp.open("GET", url, true);
         xmlhttp.send();
     }
+
+    function ajax_Delete(url, data, callback) {
+        let xhr = new XMLHttpRequest();
+        xhr.onreadystatechange = function () {
+            if (xhr.readyState === 4 && xhr.status === 200) {
+                try {
+                    callback(JSON.parse(xhr.responseText))
+                } catch(err) {
+                    console.log(err.message + " in " + xhr.responseText);
+                    return;
+                }
+            }
+        };
+        xhr.open("DELETE", url, true);
+        xhr.setRequestHeader("Content-Type", "application/json");
+        xhr.send(data);
+    }
     
     function load(){
 
@@ -87,8 +108,12 @@ td{
             window.location.href = "/transactions"
         });
 
-        document.querySelector("#li_AddItem").addEventListener('click', function (event) {
+        document.querySelector("#btnAdd").addEventListener('click', function (event) {
             window.location.href = "/transactions/add"
+        });
+
+        document.querySelector("#btnClear").addEventListener('click', function (event) {
+            clearDatabase()
         });
 
         getPurchases()
@@ -273,6 +298,22 @@ td{
         window.location.href = "/transactions/modifyLabors"
     }
 
+    function clearDatabase(){
+
+        let password = prompt("Please enter your password", "");
+        
+        let json = JSON.stringify({"password" : password})
+
+        ajax_Delete('/transactions', json , function(data) {
+            let dataResponse = JSON.parse(data)
+            if(dataResponse.result == "Failure" || dataResponse.result){
+                alert("Error: Access Denied")
+            } else{
+                window.location.href = "/transactions"
+            }
+        })
+    }
+
 
 </script>
 
@@ -284,9 +325,6 @@ td{
                 </li>
                 <li id="li_Inventory">
                     <a>Inventory</a>
-                </li>
-                <li id="li_AddItem">
-                    <a>Add item</a>
                 </li>
                 <li id="li_TotalCost">
                     <a>Total cost</a>
@@ -302,6 +340,11 @@ td{
 
     <h1>Transactions</h1>
     
+    <div id="btn">
+        <button id="btnAdd">Add item</button>
+        <button id="btnClear">Clear database</button>
+    </div>
+
     <div id="divAchat"></div>
     <div id="divDensity"></div>
     <div id="divTranformation"></div>

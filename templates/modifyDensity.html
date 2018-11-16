@@ -64,10 +64,6 @@ header li a:hover {
         document.querySelector("#li_Inventory").addEventListener('click', function (event) {
             window.location.href = "/transactions"
         });
-
-        document.querySelector("#li_AddItem").addEventListener('click', function (event) {
-            window.location.href = "/transactions/add"
-        });
         
         document.querySelector("#selectionHE").style.display = "none"
         document.querySelector("#selectionBaseOil").style.display = "none"
@@ -149,7 +145,8 @@ header li a:hover {
                                     "item": item})
 
         putAjax('/transactions/modify/density', queryData , function(data) {
-            if(data.result == "Failure" || data.result){
+            let dataResponse = JSON.parse(data)
+            if(dataResponse.result == "Failure" || dataResponse.result){
                 alert("Error: There was an error when exporting your item. Check your informations")
             } else{
                 alert("Success: Your item was modify successfully")
@@ -168,9 +165,6 @@ header li a:hover {
                 </li>
                 <li id="li_Inventory">
                     <a>Inventory</a>
-                </li>
-                <li id="li_AddItem">
-                    <a>Add item</a>
                 </li>
                 <li id="li_TotalCost">
                     <a>Total cost</a>
