@@ -39,21 +39,20 @@ header li a:hover {
 
 <script type="text/javascript">
 
-    function postAjax(url, data, callback) {
+    function putAjax(url, data, callback) {
         let xhr = new XMLHttpRequest();
-        xhr.setRequestHeader("Content-Type", "application/json");
         xhr.onreadystatechange = function () {
             if (xhr.readyState === 4 && xhr.status === 200) {
                 try {
-                    var json = JSON.parse(xmlhttp.responseText);
+                    callback(JSON.parse(xhr.responseText))
                 } catch(err) {
-                    console.log(err.message + " in " + xmlhttp.responseText);
+                    console.log(err.message + " in " + xhr.responseText);
                     return;
                 }
-                callback(json);
             }
         };
-        xhr.open("POST", url, true);
+        xhr.open("PUT", url, true);
+        xhr.setRequestHeader("Content-Type", "application/json");
         xhr.send(data);
     }
 
@@ -169,7 +168,7 @@ header li a:hover {
         
         let item = getItem()
 
-        let query = JSON.stringify({"_id": {"$oid": id}, 
+        let queryData = JSON.stringify({"id": id, 
                                     "date": date, 
                                     "item": item, 
                                     "qte": qte, 
@@ -177,9 +176,16 @@ header li a:hover {
                                     "total": total, 
                                     "stotal": stotal, 
                                     "tax": tax})
-        //postAjax()
 
-        //localStorage.clear()
+
+        putAjax('/transactions/modify/purchase', queryData , function(data) {
+            if(data.result == "Failure" || data.result){
+                alert("Error: There was an error when exporting your item. Check your informations")
+            } else{
+                alert("Success: Your item was modify successfully")
+                localStorage.clear()
+            }
+        })
     }
 
     function getItem(){

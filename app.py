@@ -1,6 +1,7 @@
 from flask import Flask, request, jsonify, abort, send_from_directory, render_template
 from flask_pymongo import PyMongo
 from bson.json_util import dumps
+from bson.objectid import ObjectId
 import hashlib
 import utilities
 
@@ -47,8 +48,6 @@ def display_labors():
 @application.route("/transactions/add", methods=["GET"])
 def display_addTransactionsHtml():
     return send_from_directory('/templates', 'addTransactions.html')
-
-
 
 @application.route("/transactions", methods=["POST"])
 def import_transactions():
@@ -120,6 +119,49 @@ def delete_transactions():
             return jsonify(result = "Success", status = "200", message = "Database emptied!"), 200
         else:
             return jsonify(result = "Failure", status = "401", message = "Wrong password!"), 401
+
+@application.route("/transactions/modify/purchase", methods=["PUT"])
+def modify_Purchase():
+    try:
+        if(request.headers['Content-Type']=="application/json"):
+            purchase = request.get_json()
+            myquery = {"_id": ObjectId(purchase["id"])}
+            newvalues = { "$set": {"date": purchase["date"], "item":purchase["item"], "qte": purchase["qte"], "total" : purchase["total"], "stotal" : purchase["stotal"], "tax" : purchase["tax"]}}
+            purchasesDb.update_one(myquery,newvalues)
+        else:
+            return jsonify(result="Failure",status="400",message="Wrong content type!"),400 
+    except Exception as e:
+            return str(e)
+    return jsonify(result = "Success", status = "200", message = "Purchase modified"), 200
+
+@application.route("/transactions/modify/density", methods=["PUT"])
+def modify_Density():
+    try:
+        if(request.headers['Content-Type']=="application/json"):
+            density = request.get_json()
+            myquery = {"_id": ObjectId(density["id"])}
+            newvalues = { "$set": {"item":density["item"], "g" : density["g"], "ml" : density["ml"]}}
+            densitiesDb.update_one(myquery,newvalues)
+        else:
+            return jsonify(result="Failure",status="400",message="Wrong content type!"),400 
+    except Exception as e:
+            return str(e)
+    return jsonify(result = "Success", status = "200", message = "Density modified"), 200
+
+@application.route("/transactions/modify/labor", methods=["PUT"])
+def modify_Labor():
+    try:
+        if(request.headers['Content-Type']=="application/json"):
+            labor = request.get_json()
+            myquery = {"_id": ObjectId(labor["id"])}
+            newvalues = { "$set": {"date": labor["date"], "item":labor["item"], "qte": labor["qte"], "jobId" : labor["jobId"], "unit" : labor["unit"], "type" : labor["type"]}}
+            laborsDb.update_one(myquery,newvalues)
+        else:
+            return jsonify(result="Failure",status="400",message="Wrong content type!"),400 
+    except Exception as e:
+            return str(e)
+    return jsonify(result = "Success", status = "200", message = "Density modified"), 200
+
 
 if __name__ ==  "__main__":
     application.run(host="0.0.0.0", port = 80)

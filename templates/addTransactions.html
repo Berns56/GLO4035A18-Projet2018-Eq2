@@ -246,8 +246,7 @@ label, input, select {
                             "tax": tax})
         
         postAjax('/transactions/add/purchase', queryData , function(data) {
-            debugger
-            if(data.result == "Failure"){
+            if(data.result == "Failure" || data.result){
                 alert("Error: There was an error when exporting your item. Check your informations")
             } else{
                 alert("Success: Your item was exported successfully")
@@ -265,7 +264,7 @@ label, input, select {
                                         "ml": ml})
         
         postAjax('/transactions/add/density', queryData , function(data) {
-            if(data.result == "Failure"){
+            if(data.result == "Failure" || data.result){
                 alert("Error: There was an error when exporting your item. Check your informations")
             } else{
                 alert("Success: Your item was exported successfully")
@@ -274,11 +273,11 @@ label, input, select {
     }
 
     function addLabor(){
-        let unit = document.querySelector("#selectPurchaseUnit").value
-        let qte = document.querySelector("#tbPurchaseQte").value 
-        let date = document.querySelector("#tbPurchaseDate").value
-        let type = document.querySelector("#tbPurchaseDate").value
-        let jobId = document.querySelector("#tbPurchaseDate").value
+        let unit = document.querySelector("#selectLaborsUnit").value
+        let qte = document.querySelector("#tbLaborsQte").value 
+        let date = document.querySelector("#tbLaborsDate").value
+        let type = document.querySelector("#tbLaborsDate").value
+        let jobId = document.querySelector("#tbLaborsDate").value
         let item = getItem("labor")
 
         let queryData = JSON.stringify({"date": date, 
@@ -289,7 +288,7 @@ label, input, select {
                             "jobId": jobId})
         
         postAjax('/transactions/add/labor', queryData , function(data) {
-            if(data.result == "Failure"){
+            if(data.result == "Failure" || data.result){
                 alert("Error: There was an error when exporting your item. Check your informations")
             } else{
                 alert("Success: Your item was exported successfully")
