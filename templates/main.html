@@ -40,8 +40,16 @@ header li a:hover {
     function load(){
         let host = window.location.hostname;
 
+        document.querySelector("#li_Home").addEventListener('click', function (event) {
+            window.location.href = "/"
+        });
+
         document.querySelector("#li_Inventory").addEventListener('click', function (event) {
             window.location.href = "/transactions"
+        });
+
+        document.querySelector("#li_AddItem").addEventListener('click', function (event) {
+            window.location.href = "/transactions/add"
         });
     }
 </script>
