@@ -78,10 +78,17 @@ td{
     }
     
     function load(){
-        let host = window.location.hostname;
+
+        document.querySelector("#li_Home").addEventListener('click', function (event) {
+            window.location.href = "/"
+        });
 
         document.querySelector("#li_Inventory").addEventListener('click', function (event) {
             window.location.href = "/transactions"
+        });
+
+        document.querySelector("#li_AddItem").addEventListener('click', function (event) {
+            window.location.href = "/transactions/add"
         });
 
         getPurchases()
@@ -95,12 +102,13 @@ td{
             let resultContainer = document.querySelector("#divAchat")
             let html = []
             html.push("<table id=\"tablePurchase\">")
-            html.push("<tr><td class=\"tableTitle\"  colspan='8'>Purchases</td></tr>")
+            html.push("<tr><td class=\"tableTitle\"  colspan='9'>Purchases</td></tr>")
             html.push("<tr>")  
             html.push("<td class=\"title\">Id</td>")  
             html.push("<td class=\"title\">Item</td>")
             html.push("<td class=\"title\">Unit</td>")
             html.push("<td class=\"title\">Quantity</td>")
+            html.push("<td class=\"title\">Date</td>")
             html.push("<td class=\"title\">Subtotal</td>")
             html.push("<td class=\"title\">Tax</td>")
             html.push("<td class=\"title\">Total</td>")
@@ -113,6 +121,7 @@ td{
                 html.push("<td id=\"purchaseItem"+element._id.$oid+"\">"+element.item+"</td>")
                 html.push("<td class=\"center\" id=\"purchaseUnit"+element._id.$oid+"\">"+element.unit+"</td>")
                 html.push("<td class=\"center\" id=\"purchaseQte"+element._id.$oid+"\">"+element.qte+"</td>")
+                html.push("<td id=\"purchaseDate"+element._id.$oid+"\">"+element.date+"</td>")
                 html.push("<td class=\"center\" id=\"purchaseStotal"+element._id.$oid+"\">"+element.stotal+" $</td>")
                 html.push("<td class=\"center\" id=\"purchaseTax"+element._id.$oid+"\">"+element.tax+" $</td>")
                 html.push("<td class=\"center\" id=\"purchaseTotal"+element._id.$oid+"\">"+element.total+" $</td>")
@@ -139,9 +148,11 @@ td{
         let stotal = document.querySelector("#purchaseStotal"+id).innerHTML
         let tax = document.querySelector("#purchaseTax"+id).innerHTML
         let total = document.querySelector("#purchaseTotal"+id).innerHTML
+        let date = document.querySelector("#purchaseDate"+id).innerHTML
 
         localStorage.setItem("id",id)
         localStorage.setItem("item",item)
+        localStorage.setItem("date",date)
         localStorage.setItem("unit",unit)
         localStorage.setItem("qte",qte)
         localStorage.setItem("stotal",stotal)
@@ -224,8 +235,8 @@ td{
                 html.push("<td id=\"laborsId"+element._id.$oid+"\">"+element._id.$oid+"</td>")
                 html.push("<td class=\"center\" id=\"laborsJobId"+element._id.$oid+"\">"+element.job_id+"</td>")
                 html.push("<td id=\"laborsItem"+element._id.$oid+"\">"+element.item+"</td>")
-                html.push("<td id=\"laborsG"+element._id.$oid+"\">"+element.date+"</td>")
-                html.push("<td class=\"center\" id=\"laborsMl"+element._id.$oid+"\">"+element.unit+"</td>")
+                html.push("<td id=\"laborsDate"+element._id.$oid+"\">"+element.date+"</td>")
+                html.push("<td class=\"center\" id=\"laborsUnit"+element._id.$oid+"\">"+element.unit+"</td>")
                 html.push("<td class=\"center\" id=\"laborsQte"+element._id.$oid+"\">"+element.qte+"</td>")
                 html.push("<td id=\"laborsType"+element._id.$oid+"\">"+element.type+"</td>")
                 html.push("<td class=\"center\"><button type='button' id=\"btnModifyLabors" + element._id.$oid + "\">Modify</button></td>")
@@ -246,17 +257,18 @@ td{
     function modifyLabors(id){
         let jobId = document.querySelector("#laborsJobId"+id).innerHTML
         let item = document.querySelector("#laborsItem"+id).innerHTML
-        let g = document.querySelector("#laborsG"+id).innerHTML
-        let ml = document.querySelector("#laborsMl"+id).innerHTML
         let qte = document.querySelector("#laborsQte"+id).innerHTML
         let type = document.querySelector("#laborsType"+id).innerHTML
-
+        let date = document.querySelector("#laborsDate"+id).innerHTML
+        let unit = document.querySelector("#laborsUnit"+id).innerHTML
+        
         localStorage.setItem("id",id)
+        localStorage.setItem("jobId",jobId)
         localStorage.setItem("item",item)
-        localStorage.setItem("g",g)
-        localStorage.setItem("ml",ml)        
-        localStorage.setItem("qte",qte)
         localStorage.setItem("type",type)
+        localStorage.setItem("date",date)        
+        localStorage.setItem("qte",qte)
+        localStorage.setItem("unit",unit)
 
         window.location.href = "/transactions/modifyLabors"
     }

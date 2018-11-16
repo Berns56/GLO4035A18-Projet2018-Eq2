@@ -39,7 +39,37 @@ header li a:hover {
 
 <script type="text/javascript">
 
+    function postAjax(url, data, callback) {
+        let xhr = new XMLHttpRequest();
+        xhr.setRequestHeader("Content-Type", "application/json");
+        xhr.onreadystatechange = function () {
+            if (xhr.readyState === 4 && xhr.status === 200) {
+                try {
+                    var json = JSON.parse(xmlhttp.responseText);
+                } catch(err) {
+                    console.log(err.message + " in " + xmlhttp.responseText);
+                    return;
+                }
+                callback(json);
+            }
+        };
+        xhr.open("POST", url, true);
+        xhr.send(data);
+    }
+
     function load(){
+        document.querySelector("#li_Home").addEventListener('click', function (event) {
+            window.location.href = "/"
+        });
+
+        document.querySelector("#li_Inventory").addEventListener('click', function (event) {
+            window.location.href = "/transactions"
+        });
+
+        document.querySelector("#li_AddItem").addEventListener('click', function (event) {
+            window.location.href = "/transactions/add"
+        });
+
         document.querySelector("#selectionHE").style.display = "none"
         document.querySelector("#selectionBaseOil").style.display = "none"
         document.querySelector("#otherConsumable").style.display = "none"
@@ -55,6 +85,10 @@ header li a:hover {
          document.querySelector("#tbPurchaseTax").addEventListener('change', function (event) {
             calculTotal()
         })
+
+        document.querySelector("#btnModifyPurchase").addEventListener('click',function(event){
+            modifyPurchase()
+        })
         
 
         let id = localStorage.getItem("id")
@@ -64,14 +98,16 @@ header li a:hover {
         let stotal = localStorage.getItem("stotal")
         let tax = localStorage.getItem("tax")
         let total = localStorage.getItem("total")
-
-        //localStorage.clear()
+        let date = localStorage.getItem("date")
+     
 
         document.querySelector("#tbPurchaseId").value = id
         document.querySelector("#tbPurchaseQte").value = qte
         document.querySelector("#tbPurchaseStotal").value = stotal
         document.querySelector("#tbPurchaseTax").value = tax
         document.querySelector("#tbPurchaseTotal").value = total
+        document.querySelector("#tbPurchaseDate").value = date
+
         setItem(item)
         setUnit(unit)
     } 
@@ -80,12 +116,12 @@ header li a:hover {
         let array = item.split(" - ")
         document.querySelector("#selectConsumable").value = array[1] 
         checkSelections()
-        if(document.querySelector("#selectConsumable").value == 1){
+
+        if(document.querySelector("#selectConsumable").value == "HE" || document.querySelector("#selectConsumable").value == "Soap"){
             document.querySelector("#selectionHE").value = array[2] 
-        } else if(document.querySelector("#selectConsumable").value == 2){
+        } else if(document.querySelector("#selectConsumable").value == "Base Oil"){
             document.querySelector("#selectionBaseOil").value = array[2] 
         }
-
     }
 
     function setUnit(unit){
@@ -93,14 +129,12 @@ header li a:hover {
     }
 
     function checkSelections(){
-        if(document.querySelector("#selectConsumable").value == "HE"){
-
+        if(document.querySelector("#selectConsumable").value == "HE" || document.querySelector("#selectConsumable").value == "Soap"){
             document.querySelector("#selectionHE").style.display = "inline"
             document.querySelector("#selectionBaseOil").style.display = "none"
             document.querySelector("#otherConsumable").style.display = "inline"
 
         } else if(document.querySelector("#selectConsumable").value == "Base Oil"){
-
             document.querySelector("#selectionHE").style.display = "none"
             document.querySelector("#selectionBaseOil").style.display = "inline"
             document.querySelector("#otherConsumable").style.display = "inline"
@@ -121,6 +155,41 @@ header li a:hover {
         document.querySelector("#tbPurchaseStotal").value = parseFloat(stotal).toFixed(2) + " $"
         document.querySelector("#tbPurchaseTax").value = parseFloat(tax).toFixed(2) + " $"
         document.querySelector("#tbPurchaseTotal").value = total.toFixed(2)  + " $"
+    }
+
+    function modifyPurchase(){
+
+        let id = document.querySelector("#tbPurchaseId").value
+        let unit = document.querySelector("#selectUnit").value
+        let qte = document.querySelector("#tbPurchaseQte").value 
+        let stotal = document.querySelector("#tbPurchaseStotal").value.replace(/\$/g,'').replace(/\ /g,'')
+        let tax = document.querySelector("#tbPurchaseTax").value.replace(/\$/g,'').replace(/\ /g,'')
+        let total = document.querySelector("#tbPurchaseTotal").value.replace(/\$/g,'').replace(/\ /g,'')
+        let date = document.querySelector("#tbPurchaseDate").value
+        
+        let item = getItem()
+
+        let query = JSON.stringify({"_id": {"$oid": id}, 
+                                    "date": date, 
+                                    "item": item, 
+                                    "qte": qte, 
+                                    "unit": unit, 
+                                    "total": total, 
+                                    "stotal": stotal, 
+                                    "tax": tax})
+        //postAjax()
+
+        //localStorage.clear()
+    }
+
+    function getItem(){
+        if(document.querySelector("#selectConsumable").value == "HE"){
+            return ("Consumable - " + document.querySelector("#selectConsumable").value + " - " + document.querySelector("#selectionHE").value)
+        } else if(document.querySelector("#selectConsumable").value == "Base Oil"){
+            return ("Consumable - " + document.querySelector("#selectConsumable").value + " - " + document.querySelector("#selectionBaseOil").value)
+        } else{
+            return ("Consumable - " + document.querySelector("#selectConsumable").value)
+        }
     }
 
 </script>
@@ -156,12 +225,14 @@ header li a:hover {
     <select id="selectConsumable">
         <option value="HE">HE</option>
         <option value="Base Oil">Base Oil</option>
+        <option value="Soap">Soap</option>
         <option value="Additive">Additive</option>
         <option value="Soude Caustique">Soude Caustique</option>
         <option value="Emballage">Emballage</option>
     </select>
     <span id="otherConsumable"> - </span>
     <select id = "selectionHE">
+        <option value=""></option>
         <option value = "Pin Blanc">Pin Blanc</option>
         <option value = "Eucalyptus Radiata">Eucalyptus Radiata</option>
         <option value = "Lavender">Lavender</option>
@@ -186,6 +257,7 @@ header li a:hover {
         <option value = "Rosemary">Rosemary</option>
     </select>
     <select id = "selectionBaseOil">
+        <option value=""></option>
         <option value = "Cire Abeille">Cire Abeille</option>
         <option value = "Olive Oil">Olive Oil</option>
         <option value = "Jojoba Oil">Jojoba Oil</option>
@@ -207,8 +279,11 @@ header li a:hover {
     </select>
     <br>
     <label for="tbPurchaseQte">Qte: </label><input type="text" id="tbPurchaseQte"><br>
+    <label for="tbPurchaseDate">Date: </label><input type="text" id="tbPurchaseDate"><br>
     <label for="tbPurchaseStotal">Stotal: </label><input type="text" id="tbPurchaseStotal"><br>
     <label for="tbPurchaseTax">Tax: </label><input type="text" id="tbPurchaseTax"><br>
-    <label for="tbPurchaseTotal">total: </label><input type="text" id="tbPurchaseTotal" disabled><br>
+    <label for="tbPurchaseTotal">Total: </label><input type="text" id="tbPurchaseTotal" disabled><br>
+    <button type='button' id="btnModifyPurchase">Modify</button>
+
 </body>
 </html>

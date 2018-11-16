@@ -39,8 +39,107 @@ header li a:hover {
 
 <script type="text/javascript">
 
+    function postAjax(url, data, callback) {
+        let xhr = new XMLHttpRequest();
+        xhr.setRequestHeader("Content-Type", "application/json");
+        xhr.onreadystatechange = function () {
+            if (xhr.readyState === 4 && xhr.status === 200) {
+                try {
+                    var json = JSON.parse(xmlhttp.responseText);
+                } catch(err) {
+                    console.log(err.message + " in " + xmlhttp.responseText);
+                    return;
+                }
+                callback(json);
+            }
+        };
+        xhr.open("POST", url, true);
+        xhr.send(data);
+    }
+
+    function load(){
+        document.querySelector("#li_Home").addEventListener('click', function (event) {
+            window.location.href = "/"
+        });
+
+        document.querySelector("#li_Inventory").addEventListener('click', function (event) {
+            window.location.href = "/transactions"
+        });
+
+        document.querySelector("#li_AddItem").addEventListener('click', function (event) {
+            window.location.href = "/transactions/add"
+        });
+        
+        document.querySelector("#selectionHE").style.display = "none"
+        document.querySelector("#selectionBaseOil").style.display = "none"
+        document.querySelector("#otherConsumable").style.display = "none"
+
+        document.querySelector("#selectConsumable").addEventListener('change', function (event) {
+            checkSelections()
+        })
+
+
+        document.querySelector("#btnModifyPurchase").addEventListener('click',function(event){
+            modifyPurchase()
+        })
+        
+
+        let id = localStorage.getItem("id")
+        let jobId = localStorage.getItem("jobId")
+        let item = localStorage.getItem("item")
+        let unit = localStorage.getItem("unit")
+        let type = localStorage.getItem("type")
+        let date = localStorage.getItem("date")
+        let qte = localStorage.getItem("qte")
+     
+
+        document.querySelector("#tbPurchaseId").value = id
+        document.querySelector("#tbPurchaseJobId").value = id
+        document.querySelector("#tbPurchaseQte").value = qte
+        document.querySelector("#tbPurchaseDate").value = date
+
+        setItem(item)
+        setUnit(unit)
+        setType(type)
+    } 
     
-    function load(){}
+    function setItem(item){
+        let array = item.split(" - ")
+        document.querySelector("#selectConsumable").value = array[1] 
+        checkSelections()
+
+        if(document.querySelector("#selectConsumable").value == "HE" || document.querySelector("#selectConsumable").value == "Soap"){
+            document.querySelector("#selectionHE").value = array[2] 
+        } else if(document.querySelector("#selectConsumable").value == "Base Oil"){
+            document.querySelector("#selectionBaseOil").value = array[2] 
+        }
+    }
+
+    function setUnit(unit){
+        document.querySelector("#selectUnit").value = unit
+    }
+
+    function setType(type){
+        document.querySelector("#selectType").value = type
+    }
+
+    function checkSelections(){
+        if(document.querySelector("#selectConsumable").value == "HE" || document.querySelector("#selectConsumable").value == "Soap"){
+            document.querySelector("#selectionHE").style.display = "inline"
+            document.querySelector("#selectionBaseOil").style.display = "none"
+            document.querySelector("#otherConsumable").style.display = "inline"
+
+        } else if(document.querySelector("#selectConsumable").value == "Base Oil"){
+            document.querySelector("#selectionHE").style.display = "none"
+            document.querySelector("#selectionBaseOil").style.display = "inline"
+            document.querySelector("#otherConsumable").style.display = "inline"
+
+        } else{
+            document.querySelector("#selectionHE").style.display = "none"
+            document.querySelector("#selectionBaseOil").style.display = "none"
+            document.querySelector("#otherConsumable").style.display = "none"
+        }
+    }
 
 </script>
 
@@ -69,6 +168,74 @@ header li a:hover {
     </header>
 
     <h1>Modify labors</h1>
+
+    <label for="tbPurchaseId">Id: </label><input type="text" id="tbPurchaseId" disabled><br>
+    <label for="tbPurchaseJobId">Job Id: </label><input type="text" id="tbPurchaseJobId"><br>
+    <label for="tbPurchaseItem">Item : Consumable - </label>
+    <select id="selectConsumable">
+        <option value="HE">HE</option>
+        <option value="Base Oil">Base Oil</option>
+        <option value="Soap">Soap</option>
+        <option value="Additive">Additive</option>
+        <option value="Soude Caustique">Soude Caustique</option>
+        <option value="Emballage">Emballage</option>
+    </select>
+    <span id="otherConsumable"> - </span>
+    <select id = "selectionHE">
+        <option value=""></option>
+        <option value = "Pin Blanc">Pin Blanc</option>
+        <option value = "Eucalyptus Radiata">Eucalyptus Radiata</option>
+        <option value = "Lavender">Lavender</option>
+        <option value = "Frangipani">Frangipani</option>
+        <option value = "Baume du Perou">Baume du Perou</option>
+        <option value = "Apple">Apple</option>
+        <option value = "Tea Tree">Tea Tree</option>
+        <option value = "Ylang Ylang">Ylang Ylang</option>
+        <option value = "Lemongrass">Lemongrass</option>
+        <option value = "Menthe Poivree">Menthe Poivree</option>
+        <option value = "Pepermint">Pepermint</option>
+        <option value = "Patchouli">Patchouli</option>
+        <option value = "Orange Douce">Orange Douce</option>
+        <option value = "Epinette Noire">Epinette Noire</option>
+        <option value = "Exotic">Exotic</option>
+        <option value = "Gardenia">Gardenia</option>
+        <option value = "Cedre Virginie">Cedre Virginie</option>
+        <option value = "Lime">Lime</option>
+        <option value = "Orange Amere">Orange Amere</option>
+        <option value = "Bergamote">Bergamote</option>
+        <option value = "Palmarosa">Palmarosa</option>
+        <option value = "Rosemary">Rosemary</option>
+    </select>
+    <select id = "selectionBaseOil">
+        <option value=""></option>
+        <option value = "Cire Abeille">Cire Abeille</option>
+        <option value = "Olive Oil">Olive Oil</option>
+        <option value = "Jojoba Oil">Jojoba Oil</option>
+        <option value = "Castor Oil">Castor Oil</option>
+        <option value = "Argan Oil">Argan Oil</option>
+        <option value = "Cameline Oil">Cameline Oil</option>
+        <option value = "Coconut Oil">Coconut Oil</option>
+        <option value = "Palm Oil">Palm Oil</option>
+        <option value = "Shea Butter">Shea Butter</option>
+        <option value = "Sweet Almond Oil">Sweet Almond Oil</option>
+        <option value = "Coco Butter">Coco Butter</option>
+        <option value = "Avocado Oil">Avocado Oil</option>
+    </select>
+    <br>
+    <label for="tbPurchaseUnit">Unit: </label>
+    <select id="selectUnit">
+        <option value="ml">ml</option>
+        <option value="g">g</option>
+    </select>
+    <br>
+    <label for="tbPurchaseDate">Date: </label><input type="text" id="tbPurchaseDate"><br>
+    <label for="tbPurchaseQte">Qte: </label><input type="text" id="tbPurchaseQte"><br>
+    <label for="selectType">Type: </label>
+    <select id="selectType">
+            <option value="usage">usage</option>
+            <option value="create">create</option>
+    </select>
+    <button type='button' id="btnModifyPurchase">Modify</button>
     
 </body>
 </html>

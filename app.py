@@ -8,9 +8,9 @@ application = Flask("my_glo4035_application")
 application.config["MONGO_URI"] = "mongodb://admin:admin123@ds237563.mlab.com:37563/soap-inventory"
 mongoDb = PyMongo(application)
 transactDb = mongoDb.db.transactions
-purchasesDb = transactDb.purchases ##
-densitiesDb = transactDb.densities ##
-laborsDb = transactDb.labors##
+purchasesDb = transactDb.purchases
+densitiesDb = transactDb.densities
+laborsDb = transactDb.labors
 
 @application.route("/", methods=["GET"])
 def index():
@@ -44,6 +44,10 @@ def display_densities():
 def display_labors():
     return dumps(laborsDb.find())
 
+@application.route("/transactions/add", methods=["GET"])
+def display_addTransactionsHtml():
+    return send_from_directory('/templates', 'addTransactions.html')
+
 
 
 @application.route("/transactions", methods=["POST"])
@@ -66,7 +70,7 @@ def import_transactions():
     else:
         return jsonify(result = "Failure", status = "400", message = "Wrong content type!"), 400
 
-@application.route("/transactions/add/purchase",methods=["POST,GET"])
+@application.route("/transactions/add/purchase",methods=["POST"])
 def add_Purchase():
     if(request.headers['Content-Type']=="application/json"):
         purchase = request.get_json()
@@ -79,12 +83,12 @@ def add_Purchase():
     return jsonify(result = "Success", status = "200", message = "Purchase add"), 200
 
 
-@application.route("/transactions/add/density",methods=["POST,GET"])
+@application.route("/transactions/add/density",methods=["POST"])
 def add_Density():
     if(request.headers['Content-Type']=="application/json"):
         purchase = request.get_json()
         if(utilities.schemaSoapValidation(purchase,utilities.SCHEMA_SOAP_DENSITY)):
-            purchasesDb.insert_one(purchase)
+            densitiesDb.insert_one(purchase)
         else:
             return jsonify(result="Failure",status="400",message="Density has the wrong content type!"),400
     else:
@@ -92,12 +96,12 @@ def add_Density():
     return jsonify(result = "Success", status = "200", message = "Density add"), 200
 
 
-@application.route("/transactions/add/labor",methods=["POST,GET"])
+@application.route("/transactions/add/labor",methods=["POST"])
 def add_Labor():
     if(request.headers['Content-Type']=="application/json"):
         purchase = request.get_json()
         if(utilities.schemaSoapValidation(purchase,utilities.SCHEMA_SOAP_LABOR)):
-            purchasesDb.insert_one(purchase)
+            laborsDb.insert_one(purchase)
         else:
             return jsonify(result="Failure",status="400",message="Labor has the wrong content type!"),400
     else:
