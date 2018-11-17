@@ -71,7 +71,6 @@ def display_labors():
 def display_addTransactionsHtml():
     return send_from_directory('/templates', 'addTransactions.html')
 
-
 @application.route("/transactions/add/purchase",methods=["POST"])
 def add_Purchase():
     if(request.headers['Content-Type']=="application/json"):
@@ -82,7 +81,7 @@ def add_Purchase():
             return jsonify(result="Failure",status="400",message="Purchase has the wrong content type!"),400
     else:
         return jsonify(result="Failure",status="400",message="Wrong content type!"),400    
-    return jsonify(result = "Success", status = "200", message = "Purchase add"), 200
+    return jsonify(result="Success", status="200", message="Purchase add"),200
 
 
 @application.route("/transactions/add/density",methods=["POST"])
@@ -95,7 +94,7 @@ def add_Density():
             return jsonify(result="Failure",status="400",message="Density has the wrong content type!"),400
     else:
         return jsonify(result="Failure",status="400",message="Wrong content type!"),400    
-    return jsonify(result = "Success", status = "200", message = "Density add"), 200
+    return jsonify(result="Success", status="200", message="Density add"),200
 
 
 @application.route("/transactions/add/labor",methods=["POST"])
@@ -108,7 +107,7 @@ def add_Labor():
             return jsonify(result="Failure",status="400",message="Labor has the wrong content type!"),400
     else:
         return jsonify(result="Failure",status="400",message="Wrong content type!"),400    
-    return jsonify(result = "Success", status = "200", message = "Labor add"), 200
+    return jsonify(result="Success", status="200", message="Labor add"), 200
 
 @application.route("/transactions/modifyPurchase", methods=["GET"])
 def display_modifyPurchaseHtml():
@@ -126,7 +125,7 @@ def modify_Purchase():
             return jsonify(result="Failure",status="400",message="Wrong content type!"),400 
     except Exception as e:
             return str(e)
-    return jsonify(result = "Success", status = "200", message = "Purchase modified"), 200
+    return jsonify(result="Success", status="200", message="Purchase modified"), 200
 
 @application.route("/transactions/modifyDensity", methods=["GET"])
 def display_modifyDensityHtml():
@@ -144,7 +143,7 @@ def modify_Density():
             return jsonify(result="Failure",status="400",message="Wrong content type!"),400 
     except Exception as e:
             return str(e)
-    return jsonify(result = "Success", status = "200", message = "Density modified"), 200
+    return jsonify(result="Success", status="200", message="Density modified"), 200
 
 @application.route("/transactions/modifyLabors", methods=["GET"])
 def display_modifyLaborsHtml():
@@ -162,7 +161,47 @@ def modify_Labor():
             return jsonify(result="Failure",status="400",message="Wrong content type!"),400 
     except Exception as e:
             return str(e)
-    return jsonify(result = "Success", status = "200", message = "Density modified"), 200
+    return jsonify(result="Success", status="200", message="labor modified"), 200
+
+@application.route("/transactions/delete/purchase", methods=["DELETE"])
+def delete_purchase():
+    try:
+        if(request.headers['Content-Type']=="application/json"):
+            purchase = request.get_json()
+            myquery = {"_id": ObjectId(purchase["id"])}
+            purchasesDb.delete_one(myquery)
+        else:
+            return jsonify(result="Failure",status="400",message="Wrong content type!"),400 
+    except Exception as e:
+            return str(e)
+    return jsonify(result="Success", status="200", message="purchase deleted"), 200
+
+
+@application.route("/transactions/delete/density", methods=["DELETE"])
+def delete_density():
+    try:
+        if(request.headers['Content-Type']=="application/json"):
+            density = request.get_json()
+            myquery = {"_id": ObjectId(density["id"])}
+            densitiesDb.delete_one(myquery)
+        else:
+            return jsonify(result="Failure",status="400",message="Wrong content type!"),400 
+    except Exception as e:
+            return str(e)
+    return jsonify(result="Success", status="200", message="density deleted"), 200
+
+@application.route("/transactions/delete/labors", methods=["DELETE"])
+def delete_labor():
+    try:
+        if(request.headers['Content-Type']=="application/json"):
+            labor = request.get_json()
+            myquery = {"_id": ObjectId(labor["id"])}
+            laborsDb.delete_one(myquery)
+        else:
+            return jsonify(result="Failure",status="400",message="Wrong content type!"),400 
+    except Exception as e:
+            return str(e)
+    return jsonify(result="Success", status="200", message="labor deleted"), 200
 
 if __name__ ==  "__main__":
     application.run(host="0.0.0.0", port = 80)

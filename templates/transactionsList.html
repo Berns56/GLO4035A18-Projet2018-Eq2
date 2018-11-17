@@ -127,7 +127,7 @@ button {
             let resultContainer = document.querySelector("#divAchat")
             let html = []
             html.push("<table id=\"tablePurchase\">")
-            html.push("<tr><td class=\"tableTitle\"  colspan='9'>Purchases</td></tr>")
+            html.push("<tr><td class=\"tableTitle\"  colspan='10'>Purchases</td></tr>")
             html.push("<tr>")  
             html.push("<td class=\"title\">Id</td>")  
             html.push("<td class=\"title\">Item</td>")
@@ -138,6 +138,7 @@ button {
             html.push("<td class=\"title\">Tax</td>")
             html.push("<td class=\"title\">Total</td>")
             html.push("<td class=\"title\">Modification</td>")
+            html.push("<td class=\"title\">Remove</td>")
             html.push("<tr>")
 
             data.forEach(element => {
@@ -151,6 +152,7 @@ button {
                 html.push("<td class=\"center\" id=\"purchaseTax"+element._id.$oid+"\">"+element.tax+" $</td>")
                 html.push("<td class=\"center\" id=\"purchaseTotal"+element._id.$oid+"\">"+element.total+" $</td>")
                 html.push("<td class=\"center\"><button type='button' id=\"btnModifyPurchase" + element._id.$oid + "\">Modify</button></td>")
+                html.push("<td class=\"center\"><button type='button' id=\"btnRemovePurchase" + element._id.$oid + "\">Remove</button></td>")
                 html.push("<tr>")  
 
                 listId.push(element._id.$oid)  
@@ -161,6 +163,10 @@ button {
             listId.forEach(id => {
                 document.querySelector("#btnModifyPurchase"+id).addEventListener('click', function (event) {
                     modifyPurchase(id)
+                });
+
+                document.querySelector("#btnRemovePurchase"+id).addEventListener('click', function (event) {
+                    deletePurchase(id)
                 });
             })
         });
@@ -187,19 +193,31 @@ button {
         window.location.href = "/transactions/modifyPurchase"
     }
 
+    function deletePurchase(id){
+        json = JSON.stringify({"id": id})
+        ajax_Delete("/transactions/delete/purchase", json , function(data) {
+            if(data.result == "Failure" || !(data.result)){
+                alert("Error: can't delete this item")
+            } else{
+                location.reload(true);
+            }
+        })
+    }
+
     function getDensities(){
         let listId = []
         ajax_get('/transactions/densities', function(data) {
             let resultContainer = document.querySelector("#divDensity")
             let html = []
             html.push("<table id=\"tableDenstiy\">")
-            html.push("<tr><td class=\"tableTitle\" colspan='6'>Density</td></tr>")
+            html.push("<tr><td class=\"tableTitle\" colspan='7'>Density</td></tr>")
             html.push("<tr>")  
             html.push("<td class=\"title\">Id</td>")
             html.push("<td class=\"title\">Item</td>")
             html.push("<td class=\"title\">g</td>")
             html.push("<td class=\"title\">ml</td>")
             html.push("<td class=\"title\">Modification</td>")
+            html.push("<td class=\"title\">Remove</td>")
             html.push("<tr>")
 
             data.forEach(element => {
@@ -209,6 +227,7 @@ button {
                 html.push("<td class=\"center\" id=\"densityG"+element._id.$oid+"\">"+element.g+"</td>")
                 html.push("<td class=\"center\" id=\"densityMl"+element._id.$oid+"\">"+element.ml+"</td>")
                 html.push("<td class=\"center\"><button type='button' id=\"btnModifyDensity" + element._id.$oid + "\">Modify</button></td>")
+                html.push("<td class=\"center\"><button type='button' id=\"btnRemoveDensity" + element._id.$oid + "\">Remove</button></td>")
                 html.push("<tr>")   
                 
                 listId.push(element._id.$oid)   
@@ -219,6 +238,10 @@ button {
             listId.forEach(id => {
                 document.querySelector("#btnModifyDensity"+id).addEventListener('click', function (event) {
                     modifyDensity(id)
+                });
+
+                document.querySelector("#btnRemoveDensity"+id).addEventListener('click', function (event) {
+                    deleteDensity(id)
                 });
             })
         });
@@ -237,13 +260,24 @@ button {
         window.location.href = "/transactions/modifyDensity"
     }
 
+    function deleteDensity(id){
+        json = JSON.stringify({"id": id})
+        ajax_Delete('/transactions/delete/density', json , function(data) {
+            if(data.result == "Failure" || !(data.result)){
+                alert("Error: can't delete this item")
+            } else{
+                location.reload(true);
+            }
+        })
+    }
+
     function getLabors(){
         let listId = []
         ajax_get('/transactions/labors', function(data) {
             let resultContainer = document.querySelector("#divTranformation")
             let html = []
             html.push("<table id=\"tableDensity\">")
-            html.push("<tr><td class=\"tableTitle\"  colspan='8'>Labors</td></tr>")
+            html.push("<tr><td class=\"tableTitle\"  colspan='9'>Labors</td></tr>")
             html.push("<tr>")  
             html.push("<td class=\"title\">Id</td>")
             html.push("<td class=\"title\">Job Id</td>")
@@ -253,6 +287,7 @@ button {
             html.push("<td class=\"title\">Qte</td>")
             html.push("<td class=\"title\">Type</td>")
             html.push("<td class=\"title\">Modification</td>")
+            html.push("<td class=\"title\">Remove</td>")
             html.push("<tr>")
 
             data.forEach(element => {
@@ -265,6 +300,7 @@ button {
                 html.push("<td class=\"center\" id=\"laborsQte"+element._id.$oid+"\">"+element.qte+"</td>")
                 html.push("<td id=\"laborsType"+element._id.$oid+"\">"+element.type+"</td>")
                 html.push("<td class=\"center\"><button type='button' id=\"btnModifyLabors" + element._id.$oid + "\">Modify</button></td>")
+                html.push("<td class=\"center\"><button type='button' id=\"btnRemoveLabors" + element._id.$oid + "\">Remove</button></td>")
                 html.push("<tr>") 
 
                 listId.push(element._id.$oid)   
@@ -274,6 +310,10 @@ button {
             listId.forEach(id => {
                 document.querySelector("#btnModifyLabors"+id).addEventListener('click', function (event) {
                     modifyLabors(id)
+                });
+
+                document.querySelector("#btnRemoveLabors"+id).addEventListener('click', function (event) {
+                    deleteLabors(id)
                 });
             })
         });
@@ -298,6 +338,17 @@ button {
         window.location.href = "/transactions/modifyLabors"
     }
 
+    function deleteLabors(id){
+        json = JSON.stringify({"id": id})
+        ajax_Delete('/transactions/delete/labors', json , function(data) {
+            if(data.result == "Failure" || !(data.result)){
+                alert("Error: can't delete this item")
+            } else{
+               location.reload(true);
+            }
+        })
+    }
+
     function clearDatabase(){
 
         let password = prompt("Please enter your password", "");
@@ -305,11 +356,10 @@ button {
         let json = JSON.stringify({"password" : password})
 
         ajax_Delete('/transactions', json , function(data) {
-            let dataResponse = JSON.parse(data)
-            if(dataResponse.result == "Failure" || dataResponse.result){
+            if(data.result == "Failure" || !(data.result)){
                 alert("Error: Access Denied")
             } else{
-                window.location.href = "/transactions"
+                location.reload(true);
             }
         })
     }

@@ -160,8 +160,7 @@ label, input, select {
 
 
         putAjax('/transactions/modify/labor', queryData , function(data) {
-            let dataResponse = JSON.parse(data)
-            if(dataResponse.result == "Failure" || dataResponse.result){
+            if(data.result == "Failure" || !(data.result)){
                 alert("Error: There was an error when exporting your item. Check your informations")
             } else{
                 alert("Success: Your item was modify successfully")

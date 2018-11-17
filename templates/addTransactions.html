@@ -242,8 +242,7 @@ label, input, select {
                             "tax": tax})
         
         postAjax('/transactions/add/purchase', queryData , function(data) {
-            let dataResponse = JSON.parse(data)
-            if(dataResponse.result == "Failure" || dataResponse.result){
+            if(data.result == "Failure" || !(data.result)){
                 alert("Error: There was an error when exporting your item. Check your informations")
             } else{
                 alert("Success: Your item was exported successfully")
@@ -261,8 +260,7 @@ label, input, select {
                                         "ml": ml})
         
         postAjax('/transactions/add/density', queryData , function(data) {
-            let dataResponse = JSON.parse(data)
-            if(dataResponse.result == "Failure" || dataResponse.result){
+            if(data.result == "Failure" || !(data.result)){
                 alert("Error: There was an error when exporting your item. Check your informations")
             } else{
                 alert("Success: Your item was exported successfully")
@@ -286,8 +284,7 @@ label, input, select {
                             "jobId": jobId})
         
         postAjax('/transactions/add/labor', queryData , function(data) {
-            let dataResponse = JSON.parse(data)
-            if(dataResponse.result == "Failure" || dataResponse.result){
+            if(data.result == "Failure" || !(data.result)){
                 alert("Error: There was an error when exporting your item. Check your informations")
             } else{
                 alert("Success: Your item was exported successfully")
