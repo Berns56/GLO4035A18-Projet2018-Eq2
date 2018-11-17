@@ -207,7 +207,7 @@ def delete_labor():
 def display_totalCostHtml():
     return send_from_directory('/templates', 'totalCost.html')
 
-@application.route("/totalCost/purchase", methods=["GET"])
+@application.route("/totalCost/purchase", methods=["POST"])
 def totalCostPurchase():
     try:
         if(request.headers['Content-Type']=="application/json"):

@@ -48,23 +48,21 @@ label, input, select {
 <script>
 
     function ajax_get(url, data, callback) {
-        let xmlhttp = new XMLHttpRequest();
-        xmlhttp.onreadystatechange = function() {
-            if (xmlhttp.readyState == 4 && xmlhttp.status == 200) {
-                console.log('responseText:' + xmlhttp.responseText);
+        let xhr = new XMLHttpRequest();
+        xhr.onreadystatechange = function () {
+            if (xhr.readyState === 4 && xhr.status === 200) {
                 try {
-                    callback(JSON.parse(xmlhttp.responseText));
+                    callback(JSON.parse(xhr.responseText))
                 } catch(err) {
-                    console.log(err.message + " in " + xmlhttp.responseText);
+                    console.log(err.message + " in " + xhr.responseText);
                     return;
                 }
-                
             }
         };
- 
-        xmlhttp.open("GET", url, true);
-        xmlhttp.setRequestHeader("Content-Type", "application/json");
-        xmlhttp.send(data);
+
+        xhr.open("POST", url, true);
+        xhr.setRequestHeader("Content-Type", "application/json");
+        xhr.send(data);
     }
 
     function load(){
@@ -95,10 +93,13 @@ label, input, select {
                 alert("Error: Please insert a date")
             else{
                 ajax_get("/totalCost/purchase", json, function(data){
-                    if(data.result == "Failure" || !(data.result)){
+
+                    if(data === undefined || data.length == 0){
+                        document.querySelector("#totalCost").innerHTML = "Sorry, there's no data cost for this date!"
+                    } else if(data.result == "Failure"){
                         alert("Error: can't delete this item")
                     } else{
-                        document.querySelector("#totalCost").value = "Total cost of " + type + " on " + date + " : " + data.totalCost + " $"
+                        document.querySelector("#totalCost").innerHTML = "Total cost of " + type + " on " + date + " : " + data.totalCost + " $"
                     }
                 })
             }
