@@ -112,6 +112,10 @@ button {
             window.location.href = "/transactions/add"
         });
 
+        document.querySelector("#li_TotalCost").addEventListener('click', function (event) {
+            window.location.href = "/totalCost"
+        });
+
         document.querySelector("#btnClear").addEventListener('click', function (event) {
             clearDatabase()
         });

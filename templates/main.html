@@ -8,7 +8,7 @@
 <style>
     /*---------Base-------*/
 header{
-    display: block;
+    display: flex;
     width: 100%;
 }
 
@@ -21,7 +21,7 @@ header li {
 }
 
 header li a {
-    width: 100px;
+    width: 100%;
     background-color: #ccffff;
     padding: 1% 5%;
     border: 1px solid black;
@@ -34,6 +34,30 @@ header li a:hover {
     text-decoration: underline ;
     cursor: pointer;
 }
+
+#tablePurchase, #tableDenstiy, #tableDensity{
+    margin-bottom: 30px;
+    width: 100%;
+    border-collapse: collapse;
+}
+
+td{
+    border: 1px solid #777;
+}
+
+.tableTitle, .title{
+    text-align: center;
+    font-weight: bold;
+}
+
+.center{
+    text-align: center;
+}
+
+button {
+    margin-bottom: 10px;
+}
+
 </style>
 
 <script>
@@ -46,6 +70,10 @@ header li a:hover {
 
         document.querySelector("#li_Inventory").addEventListener('click', function (event) {
             window.location.href = "/transactions"
+        });
+
+         document.querySelector("#li_TotalCost").addEventListener('click', function (event) {
+            window.location.href = "/totalCost"
         });
     }
 </script>
@@ -71,8 +99,7 @@ header li a:hover {
             </ul>
     </header>
 
-    <h1>SoapInventory Inc.</h1>
-    <h2>East. 1993</h2>
+    <h1>SoapInventory Inc. East. 1993</h1>
     <p>Welcome</p>
     <img src="https://buildingmarkets.org/blogs/files/2011/07/soap.gif" />
 </body>

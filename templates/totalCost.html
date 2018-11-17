@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Main Savon</title>
+</head>
+
+<style>
+    /*---------Base-------*/
+    header{
+    display: flex;
+    width: 100%;
+}
+
+header ul {
+    width: 100%;
+}
+
+header li {
+    display: inline;
+}
+
+header li a {
+    width: 100%;
+    background-color: #ccffff;
+    padding: 1% 5%;
+    border: 1px solid black;
+    color:black;
+    size: 15px;
+}
+
+header li a:hover {
+    background: #cc0000;
+    text-decoration: underline ;
+    cursor: pointer;
+}
+
+
+button {
+    margin-bottom: 10px;
+}
+
+label, input, select {
+    margin-bottom: 15px;
+}
+</style>
+
+<script>
+
+    function ajax_get(url, data, callback) {
+        let xmlhttp = new XMLHttpRequest();
+        xmlhttp.onreadystatechange = function() {
+            if (xmlhttp.readyState == 4 && xmlhttp.status == 200) {
+                console.log('responseText:' + xmlhttp.responseText);
+                try {
+                    callback(JSON.parse(xmlhttp.responseText));
+                } catch(err) {
+                    console.log(err.message + " in " + xmlhttp.responseText);
+                    return;
+                }
+                
+            }
+        };
+ 
+        xmlhttp.open("GET", url, true);
+        xmlhttp.setRequestHeader("Content-Type", "application/json");
+        xmlhttp.send(data);
+    }
+
+    function load(){
+
+        document.querySelector("#li_Home").addEventListener('click', function (event) {
+            window.location.href = "/"
+        });
+
+        document.querySelector("#li_Inventory").addEventListener('click', function (event) {
+            window.location.href = "/transactions"
+        });
+
+        document.querySelector("#li_TotalCost").addEventListener('click', function (event) {
+            window.location.href = "/totalCost"
+        });
+
+        document.querySelector("#btnGetTotal").addEventListener('click', function (event) {
+            getTotal()
+        });
+
+        function getTotal(){
+            let date = document.querySelector("#tbPurchaseDate").value
+            let type = document.querySelector("#selectPurchaseConsumable").value
+
+            json = JSON.stringify({"date":date, "type": type})
+
+            if(!date)
+                alert("Error: Please insert a date")
+            else{
+                ajax_get("/totalCost/purchase", json, function(data){
+                    if(data.result == "Failure" || !(data.result)){
+                        alert("Error: can't delete this item")
+                    } else{
+                        document.querySelector("#totalCost").value = "Total cost of " + type + " on " + date + " : " + data.totalCost + " $"
+                    }
+                })
+            }
+        }
+    }
+</script>
+
+<body onload="load()">
+    <header>
+            <ul>
+                <li id="li_Home">
+                    <a>Home</a>
+                </li>
+                <li id="li_Inventory">
+                    <a>Inventory</a>
+                </li>
+                <li id="li_TotalCost">
+                    <a>Total cost</a>
+                </li>
+                <li id="li_AvgCost">
+                    <a>Average Acquisition cost</a>
+                </li>
+                <li id="li_Image">
+                    <a>Past images</a>
+                </li>
+            </ul>
+    </header>
+
+    <h1>Total cost</h1>
+
+    <label>Select the date and the consumable category: </label><br><br>
+
+    <label for="tbPurchaseDate">Date: </label><input type="text" id="tbPurchaseDate"><br>
+
+    <label for="tbPurchaseItem">Item : Consumable - </label>
+    <select id="selectPurchaseConsumable">
+        <option value="HE">HE</option>
+        <option value="Base Oil">Base Oil</option>
+        <option value="Soap">Soap</option>
+        <option value="Additive">Additive</option>
+        <option value="Soude Caustique">Soude Caustique</option>
+        <option value="Emballage">Emballage</option>
+    </select>
+    <br>
+    <button type='button' id="btnGetTotal">Get total</button>
+    <br><br>
+    <div id="totalCost">
+
+    </div>
+</body>
+</html>
