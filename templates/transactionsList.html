@@ -116,6 +116,14 @@ button {
             window.location.href = "/totalCost"
         });
 
+        document.querySelector("#li_AvgCost").addEventListener('click', function (event) {
+            window.location.href = "/averageCost"
+        });
+
+        document.querySelector("#li_quantity").addEventListener('click', function (event) {
+            window.location.href = "/leftQuantity"
+        });
+
         document.querySelector("#btnClear").addEventListener('click', function (event) {
             clearDatabase()
         });
@@ -297,7 +305,7 @@ button {
             data.forEach(element => {
                 html.push("<tr id=\"labors"+element._id.$oid+"\">")   
                 html.push("<td id=\"laborsId"+element._id.$oid+"\">"+element._id.$oid+"</td>")
-                html.push("<td class=\"center\" id=\"laborsJobId"+element._id.$oid+"\">"+element.job_id+"</td>")
+                html.push("<td class=\"center\" id=\"laborsJobId"+element._id.$oid+"\">"+element.jobId+"</td>")
                 html.push("<td id=\"laborsItem"+element._id.$oid+"\">"+element.item+"</td>")
                 html.push("<td id=\"laborsDate"+element._id.$oid+"\">"+element.date+"</td>")
                 html.push("<td class=\"center\" id=\"laborsUnit"+element._id.$oid+"\">"+element.unit+"</td>")
@@ -386,8 +394,8 @@ button {
                 <li id="li_AvgCost">
                     <a>Average Acquisition cost</a>
                 </li>
-                <li id="li_Image">
-                    <a>Past images</a>
+                <li id="li_quantity">
+                    <a>Left quantity</a>
                 </li>
             </ul>
     </header>

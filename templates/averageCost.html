@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Total cost</title>
+    <title>Average cost</title>
 </head>
 
 <style>
@@ -47,7 +47,7 @@ label, input, select {
 
 <script>
 
-    function ajax_post(url, data, callback) {
+    function ajax_get(url, data, callback) {
         let xhr = new XMLHttpRequest();
         xhr.onreadystatechange = function () {
             if (xhr.readyState === 4 && xhr.status === 200) {
@@ -93,21 +93,22 @@ label, input, select {
 
         function getTotal(){
             let date = document.querySelector("#tbPurchaseDate").value
+            let unit = document.querySelector("#selectPurchaseUnit").value
             let type = document.querySelector("#selectPurchaseConsumable").value
 
-            json = JSON.stringify({"date":date, "type": type})
+            json = JSON.stringify({"date":date, "unit": unit, "type": type})
 
             if(!date)
                 alert("Error: Please insert a date")
             else{
-                ajax_post("/totalCost", json, function(data){
+                ajax_get("/averageCost", json, function(data){
 
                     if(data === undefined || data.length == 0){
-                        document.querySelector("#totalCost").innerHTML = "Sorry, there's no data cost for this date!"
+                        document.querySelector("#totalCost").innerHTML = "Sorry, there's no average cost for this date!"
                     } else if(data.result == "Failure"){
                         alert("Error: can't delete this item")
                     } else{
-                        document.querySelector("#totalCost").innerHTML = "Total cost of " + type + " on " + date + " : " + data.totalCost + " $"
+                        document.querySelector("#totalCost").innerHTML = "average cost of " + type + " on " + date + " : " + data.avgCost + " $/"+unit
                     }
                 })
             }
@@ -136,12 +137,16 @@ label, input, select {
             </ul>
     </header>
 
-    <h1>Total cost</h1>
+    <h1>Average cost</h1>
 
-    <label>Select the date and the consumable category: </label><br><br>
+    <label>Select the date, unit and the consumable category: </label><br><br>
 
     <label for="tbPurchaseDate">Date: </label><input type="text" id="tbPurchaseDate"><br>
-
+    <label for="selectPurchaseUnit">Unit: </label>
+    <select id="selectPurchaseUnit">
+        <option value="ml">ml</option>
+        <option value="g">g</option>
+    </select>
     <label for="tbPurchaseItem">Item : Consumable - </label>
     <select id="selectPurchaseConsumable">
         <option value="HE">HE</option>

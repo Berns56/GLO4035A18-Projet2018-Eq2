@@ -207,8 +207,26 @@ def delete_labor():
 def display_totalCostHtml():
     return send_from_directory('/templates', 'totalCost.html')
 
-@application.route("/totalCost/purchase", methods=["POST"])
+@application.route("/totalCost", methods=["POST"])
 def totalCostPurchase():
+    try:
+        if(request.headers['Content-Type']=="application/json"):
+            purchase = request.get_json()
+            regex = "/%s/" % purchase["type"]
+            myquery = {"$and":[{"date":purchase["date"]}, {"item" : {"$regex": regex}}]}
+            return dumps(purchasesDb.find(myquery))
+        else:
+            return jsonify(result="Failure",status="400",message="Wrong content type!"),400 
+    except Exception as e:
+            return str(e)
+    return jsonify(result="Success", status="200", message="labor deleted"), 200
+
+@application.route("/averageCost", methods=["GET"])
+def display_averageCostHtml():
+    return send_from_directory('/templates', 'totalCost.html')
+
+@application.route("/averageCost", methods=["POST"])
+def averageCostPurchase():
     try:
         if(request.headers['Content-Type']=="application/json"):
             purchase = request.get_json()

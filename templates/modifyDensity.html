@@ -72,6 +72,14 @@ label, input, select {
         document.querySelector("#li_TotalCost").addEventListener('click', function (event) {
             window.location.href = "/totalCost"
         });
+
+        document.querySelector("#li_AvgCost").addEventListener('click', function (event) {
+            window.location.href = "/averageCost"
+        });
+
+        document.querySelector("#li_quantity").addEventListener('click', function (event) {
+            window.location.href = "/leftQuantity"
+        });
         
         document.querySelector("#selectionHE").style.display = "none"
         document.querySelector("#selectionBaseOil").style.display = "none"
@@ -179,8 +187,8 @@ label, input, select {
                 <li id="li_AvgCost">
                     <a>Average Acquisition cost</a>
                 </li>
-                <li id="li_Image">
-                    <a>Past images</a>
+                <li id="li_quantity">
+                    <a>Left quantity</a>
                 </li>
             </ul>
     </header>
