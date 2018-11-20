@@ -93,9 +93,8 @@ label, input, select {
 
         function getTotal(){
             let date = document.querySelector("#tbPurchaseDate").value
-            let type = document.querySelector("#selectPurchaseConsumable").value
 
-            json = JSON.stringify({"date":date, "type": type})
+            json = JSON.stringify({"date":date})
 
             if(!date)
                 alert("Error: Please insert a date")
@@ -107,7 +106,8 @@ label, input, select {
                     } else if(data.result == "Failure"){
                         alert("Error: can't delete this item")
                     } else{
-                        document.querySelector("#totalCost").innerHTML = "Total cost of " + type + " on " + date + " : " + data.totalCost + " $"
+                        //document.querySelector("#totalCost").innerHTML = "Total cost on " + date + " : " + data.totalCost + " $"
+                        document.querySelector("#totalCost").innerHTML = JSON.stringify(data)
                     }
                 })
             }
@@ -138,20 +138,9 @@ label, input, select {
 
     <h1>Total cost</h1>
 
-    <label>Select the date and the consumable category: </label><br><br>
+    <label>Select the date to display the total cost: </label><br><br>
 
     <label for="tbPurchaseDate">Date: </label><input type="date" id="tbPurchaseDate"><br>
-
-    <label for="tbPurchaseItem">Item : Consumable - </label>
-    <select id="selectPurchaseConsumable">
-        <option value="HE">HE</option>
-        <option value="Base Oil">Base Oil</option>
-        <option value="Soap">Soap</option>
-        <option value="Additive">Additive</option>
-        <option value="Soude Caustique">Soude Caustique</option>
-        <option value="Emballage">Emballage</option>
-    </select>
-    <br>
     <button type='button' id="btnGetTotal">Get total</button>
     <br><br>
     <div id="totalCost">
