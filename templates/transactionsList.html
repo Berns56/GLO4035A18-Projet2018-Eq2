@@ -141,17 +141,17 @@ a:hover {
         });
 
         document.querySelector("#aPurchase").addEventListener('click', function (event) {
-            let top = document.querySelector("#aPurchase").offsetTop; 
+            let top = document.querySelector("#divAchat").offsetTop; 
             window.scrollTo(0, top);  
         });
 
         document.querySelector("#aDensities").addEventListener('click', function (event) {
-            let top = document.querySelector("#aDensities").offsetTop; 
+            let top = document.querySelector("#divDensity").offsetTop; 
             window.scrollTo(0, top);  
         });
 
         document.querySelector("#aLabors").addEventListener('click', function (event) {
-            let top = document.querySelector("#aLabors").offsetTop; 
+            let top = document.querySelector("#divTranformation").offsetTop; 
             window.scrollTo(0, top); 
         });
 
@@ -186,7 +186,7 @@ a:hover {
                 html.push("<td id=\"purchaseItem"+element._id.$oid+"\">"+element.item+"</td>")
                 html.push("<td class=\"center\" id=\"purchaseUnit"+element._id.$oid+"\">"+element.unit+"</td>")
                 html.push("<td class=\"center\" id=\"purchaseQte"+element._id.$oid+"\">"+element.qte+"</td>")
-                html.push("<td id=\"purchaseDate"+element._id.$oid+"\">"+element.date+"</td>")
+                html.push("<td class=\"center\" id=\"purchaseDate"+element._id.$oid+"\">"+element.date+"</td>")
                 html.push("<td class=\"center\" id=\"purchaseStotal"+element._id.$oid+"\">"+element.stotal+" $</td>")
                 html.push("<td class=\"center\" id=\"purchaseTax"+element._id.$oid+"\">"+element.tax+" $</td>")
                 html.push("<td class=\"center\" id=\"purchaseTotal"+element._id.$oid+"\">"+element.total+" $</td>")
@@ -334,7 +334,7 @@ a:hover {
                 html.push("<td id=\"laborsId"+element._id.$oid+"\">"+element._id.$oid+"</td>")
                 html.push("<td class=\"center\" id=\"laborsJobId"+element._id.$oid+"\">"+element.job_id+"</td>")
                 html.push("<td id=\"laborsItem"+element._id.$oid+"\">"+element.item+"</td>")
-                html.push("<td id=\"laborsDate"+element._id.$oid+"\">"+element.date+"</td>")
+                html.push("<td class=\"center\" id=\"laborsDate"+element._id.$oid+"\">"+element.date+"</td>")
                 html.push("<td class=\"center\" id=\"laborsUnit"+element._id.$oid+"\">"+element.unit+"</td>")
                 html.push("<td class=\"center\" id=\"laborsQte"+element._id.$oid+"\">"+element.qte+"</td>")
                 html.push("<td id=\"laborsType"+element._id.$oid+"\">"+element.type+"</td>")

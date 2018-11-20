@@ -102,7 +102,7 @@ label, input, select {
                 ajax_post("/totalCost", json, function(data){
 
                     if(data === undefined || data.length == 0){
-                        document.querySelector("#totalCost").innerHTML = "Sorry, there's no data cost for this date!"
+                        document.querySelector("#totalCost").innerHTML = "Sorry, there's no data for this date!"
                     } else if(data.result == "Failure"){
                         alert("Error: can't delete this item")
                     } else{
