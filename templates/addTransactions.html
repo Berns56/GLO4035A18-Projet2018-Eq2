@@ -90,6 +90,16 @@ label, input, select {
         document.querySelector("#selectionPurchaseBaseOil").style.display = "none"
         document.querySelector("#otherPurchaseConsumable").style.display = "none"
 
+        document.querySelector("#selectionDensityBaseOil").style.display = "none"
+        document.querySelector("#otherDensityConsumable").style.display = "none"
+
+        document.querySelector("#selectionLaborsBaseOil").style.display = "none"
+        document.querySelector("#otherLaborsConsumable").style.display = "none"
+
+        document.querySelector("#tbPurchaseStotal").value = parseFloat(0).toFixed(2) + " $"
+        document.querySelector("#tbPurchaseTax").value = parseFloat(0).toFixed(2) + " $"
+        calculTotal()
+
         document.querySelector("#selectPurchaseConsumable").addEventListener('change', function (event) {
             checkSelections()
         })
