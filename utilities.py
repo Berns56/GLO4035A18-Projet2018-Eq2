@@ -76,3 +76,28 @@ SCHEMA_SOAP_LABOR = {
     },
     "required" : ["date", "item", "qte", "unit", "type"]
 }
+
+def dateFormat(p_dateToFormat):
+	try:
+		dateInProcess = p_dateToFormat.split(" ")
+		if len(dateInProcess) == 3:
+			dateInProcess[1] = convertStrMonthToStrMonthNumber(dateInProcess[1].upper())
+			return str(dateInProcess[2] + "-" + dateInProcess[1] + "-" + dateInProcess[0])
+	except Exception as e:
+		return str(e)
+
+def convertStrMonthToStrMonthNumber(p_monthToConvert):
+    return {
+        "JANUARY" : "01",
+        "FEBRUARY" : "02",
+        "MARCH" : "03",
+        "APRIL" : "04",
+        "MAY" : "05",
+        "JUNE" : "06",
+        "JULY" : "07",
+        "AUGUST" : "08",
+        "SEPTEMBER" : "09",
+        "OCTOBER" : "10",
+        "NOVEMBER" : "11",
+        "DECEMBER" : "12"
+	}.get(p_monthToConvert)

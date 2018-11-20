@@ -28,10 +28,14 @@ def import_transactions():
             dataJSON = [request.get_json()]
             for dataItem in dataJSON:
                 if utilities.schemaSoapValidation(dataItem, utilities.SCHEMA_SOAP_PURCHASE):
+                    strDate = dataItem["date"]
+                    dataItem["date"] = utilities.dateFormat(strDate)
                     purchasesDb.insert_one(dataItem)
                 elif utilities.schemaSoapValidation(dataItem, utilities.SCHEMA_SOAP_DENSITY): 
                     densitiesDb.insert_one(dataItem)
                 elif utilities.schemaSoapValidation(dataItem, utilities.SCHEMA_SOAP_LABOR): 
+                    strDate = dataItem["date"]
+                    dataItem["date"] = utilities.dateFormat(strDate)
                     laborsDb.insert_one(dataItem)
                 else:
                     return jsonify(result = "Failure", status = "400", message = "Wrong transaction format!"), 400 
