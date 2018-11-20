@@ -82,6 +82,7 @@ def dateFormat(p_dateToFormat):
 		dateInProcess = p_dateToFormat.split(" ")
 		if len(dateInProcess) == 3:
 			dateInProcess[1] = convertStrMonthToStrMonthNumber(dateInProcess[1].upper())
+			dateInProcess[0] = convertStrDaytoStrDayNumber(dateInProcess[0])
 			return str(dateInProcess[2] + "-" + dateInProcess[1] + "-" + dateInProcess[0])
 	except Exception as e:
 		return str(e)
@@ -101,3 +102,10 @@ def convertStrMonthToStrMonthNumber(p_monthToConvert):
         "NOVEMBER" : "11",
         "DECEMBER" : "12"
 	}.get(p_monthToConvert)
+
+def convertStrDaytoStrDayNumber(p_dayToConvert):
+    if len(p_dayToConvert) > 1:
+        return p_dayToConvert
+    else:
+        return ("0"+p_dayToConvert)
+        
