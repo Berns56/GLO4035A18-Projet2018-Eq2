@@ -58,6 +58,18 @@ button {
     margin-bottom: 10px;
 }
 
+a{
+    text-decoration: underline;
+}
+
+a:link {
+    color:#ccffff;
+}
+
+a:hover {
+    color: #cc0000;
+}
+
 </style>
 
 <script type="text/javascript">
@@ -126,6 +138,21 @@ button {
 
         document.querySelector("#btnClear").addEventListener('click', function (event) {
             clearDatabase()
+        });
+
+        document.querySelector("#aPurchase").addEventListener('click', function (event) {
+            let top = document.querySelector("#aPurchase").offsetTop; 
+            window.scrollTo(0, top);  
+        });
+
+        document.querySelector("#aDensities").addEventListener('click', function (event) {
+            let top = document.querySelector("#aDensities").offsetTop; 
+            window.scrollTo(0, top);  
+        });
+
+        document.querySelector("#aLabors").addEventListener('click', function (event) {
+            let top = document.querySelector("#aLabors").offsetTop; 
+            window.scrollTo(0, top); 
         });
 
         getPurchases()
@@ -305,7 +332,7 @@ button {
             data.forEach(element => {
                 html.push("<tr id=\"labors"+element._id.$oid+"\">")   
                 html.push("<td id=\"laborsId"+element._id.$oid+"\">"+element._id.$oid+"</td>")
-                html.push("<td class=\"center\" id=\"laborsJobId"+element._id.$oid+"\">"+element.jobId+"</td>")
+                html.push("<td class=\"center\" id=\"laborsJobId"+element._id.$oid+"\">"+element.job_id+"</td>")
                 html.push("<td id=\"laborsItem"+element._id.$oid+"\">"+element.item+"</td>")
                 html.push("<td id=\"laborsDate"+element._id.$oid+"\">"+element.date+"</td>")
                 html.push("<td class=\"center\" id=\"laborsUnit"+element._id.$oid+"\">"+element.unit+"</td>")
@@ -375,8 +402,6 @@ button {
             }
         })
     }
-
-
 </script>
 
 <body onload="load()">
@@ -407,6 +432,12 @@ button {
         <button id="btnClear">Clear database</button>
     </div>
 
+    <div>
+        <a id="aPurchase">Purchases</a> -
+        <a id="aDensities">Densities</a> -
+        <a id="aLabors">Labors</a>
+    </div>
+    <br>
     <div id="divAchat"></div>
     <div id="divDensity"></div>
     <div id="divTranformation"></div>
