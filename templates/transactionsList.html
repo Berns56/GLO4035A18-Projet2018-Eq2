@@ -141,26 +141,24 @@ a:hover {
         });
 
         document.querySelector("#aPurchase").addEventListener('click', function (event) {
-            jumpTo("#aPurchase")
+            let top = document.querySelector("#aPurchase").offsetTop; 
+            window.scrollTo(0, top);  
         });
 
         document.querySelector("#aDensities").addEventListener('click', function (event) {
-            jumpTo("#aDensities")
+            let top = document.querySelector("#aDensities").offsetTop; 
+            window.scrollTo(0, top);  
         });
 
         document.querySelector("#aLabors").addEventListener('click', function (event) {
-            jumpTo("#aLabors")
+            let top = document.querySelector("#aLabors").offsetTop; 
+            window.scrollTo(0, top); 
         });
 
         getPurchases()
         getDensities()
         getLabors()   
     } 
-
-    function jumpTo(h){
-        var top = document.querySelector(h).offsetTop; 
-        window.scrollTo(0, top);    
-    }
 
     function getPurchases(){
         let listId = []

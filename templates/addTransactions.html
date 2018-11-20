@@ -159,7 +159,7 @@ label, input, select {
                 document.querySelector("#otherLaborsConsumable").style.display = "inline"
 
             } else if(document.querySelector("#selectLaborsConsumable").value == "Base Oil"){
-                document.querySelector("#selectionLaborseHE").style.display = "none"
+                document.querySelector("#selectionLaborsHE").style.display = "none"
                 document.querySelector("#selectionLaborsBaseOil").style.display = "inline"
                 document.querySelector("#otherLaborsConsumable").style.display = "inline"
 
@@ -404,7 +404,7 @@ label, input, select {
         </select>
         <br>
         <label for="tbPurchaseQte">Qte: </label><input type="text" id="tbPurchaseQte"><br>
-        <label for="tbPurchaseDate">Date: </label><input type="text" id="tbPurchaseDate"><br>
+        <label for="tbPurchaseDate">Date: </label><input type="date" id="tbPurchaseDate"><br>
         <label for="tbPurchaseStotal">Subtotal: </label><input type="text" id="tbPurchaseStotal"><br>
         <label for="tbPurchaseTax">Tax: </label><input type="text" id="tbPurchaseTax"><br>
         <label for="tbPurchaseTotal">Total: </label><input type="text" id="tbPurchaseTotal" disabled><br>
@@ -527,7 +527,7 @@ label, input, select {
             <option value="g">g</option>
         </select>
         <br>
-        <label for="tbLaborsDate">Date: </label><input type="text" id="tbLaborsDate"><br>
+        <label for="tbLaborsDate">Date: </label><input type="date" id="tbLaborsDate"><br>
         <label for="tbLaborsQte">Qte: </label><input type="text" id="tbLaborsQte"><br>
         <label for="selectLaborsType">Type: </label>
         <select id="selectLaborsType">
