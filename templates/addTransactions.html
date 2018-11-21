@@ -259,9 +259,9 @@ label, input, select {
                             "item": item, 
                             "qte": qte, 
                             "unit": unit, 
-                            "total": total, 
-                            "stotal": stotal, 
-                            "tax": tax})
+                            "total": parseFloat(total).toFixed(2), 
+                            "stotal": parseFloat(stotal).toFixed(2), 
+                            "tax": parseFloat(tax).toFixed(2)})
         
         postAjax('/transactions/add/purchase', queryData , function(data) {
             if(data.result == "Failure" || !(data.result)){
