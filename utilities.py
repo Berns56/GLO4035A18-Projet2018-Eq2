@@ -107,5 +107,5 @@ def convertStrDaytoStrDayNumber(p_dayToConvert):
     if len(p_dayToConvert) > 1:
         return p_dayToConvert
     else:
-        return ("0"+p_dayToConvert)
+        return ("0" + p_dayToConvert)
         

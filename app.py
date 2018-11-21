@@ -2,6 +2,7 @@ from flask import Flask, request, jsonify, abort, send_from_directory, render_te
 from flask_pymongo import PyMongo
 from bson.json_util import dumps
 from bson.objectid import ObjectId
+import decimal
 import hashlib
 import utilities
 
@@ -28,12 +29,28 @@ def import_transactions():
             dataJSON = [request.get_json()]
             for dataItem in dataJSON:
                 if utilities.schemaSoapValidation(dataItem, utilities.SCHEMA_SOAP_PURCHASE):
+                    strQte = dataItem["qte"]
+                    dataItem["qte"] = int(strQte)
+                    strTotal = dataItem["total"]
+                    dataItem["total"] = float(strTotal)
+                    strSTotal = dataItem["stotal"]
+                    dataItem["stotal"] = float(strSTotal)
+                    strTax = dataItem["tax"]
+                    dataItem["tax"] = float(strTax)
                     strDate = dataItem["date"]
                     dataItem["date"] = utilities.dateFormat(strDate)
                     purchasesDb.insert_one(dataItem)
                 elif utilities.schemaSoapValidation(dataItem, utilities.SCHEMA_SOAP_DENSITY): 
+                    strG = dataItem["g"]
+                    dataItem["g"] = float(strG)
+                    strML = dataItem["ml"]
+                    dataItem["ml"] = float(strML)
                     densitiesDb.insert_one(dataItem)
                 elif utilities.schemaSoapValidation(dataItem, utilities.SCHEMA_SOAP_LABOR): 
+                    strQte = dataItem["qte"]
+                    dataItem["qte"] = int(strQte)
+                    strJobId = dataItem["job_id"]
+                    dataItem["job_id"] = int(strJobId)
                     strDate = dataItem["date"]
                     dataItem["date"] = utilities.dateFormat(strDate)
                     laborsDb.insert_one(dataItem)
