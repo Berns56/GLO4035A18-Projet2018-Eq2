@@ -192,7 +192,7 @@ a:hover {
                 html.push("<td class=\"center\" id=\"purchaseTotal"+element._id.$oid+"\">"+element.total+" $</td>")
                 html.push("<td class=\"center\"><button type='button' id=\"btnModifyPurchase" + element._id.$oid + "\">Modify</button></td>")
                 html.push("<td class=\"center\"><button type='button' id=\"btnRemovePurchase" + element._id.$oid + "\">Remove</button></td>")
-                html.push("<tr>")  
+                html.push("</tr>")  
 
                 listId.push(element._id.$oid)  
             });
@@ -257,7 +257,7 @@ a:hover {
             html.push("<td class=\"title\">ml</td>")
             html.push("<td class=\"title\">Modification</td>")
             html.push("<td class=\"title\">Remove</td>")
-            html.push("<tr>")
+            html.push("</tr>")
 
             data.forEach(element => {
                 html.push("<tr id=\"density"+element._id.$oid+"\">")   
@@ -327,7 +327,7 @@ a:hover {
             html.push("<td class=\"title\">Type</td>")
             html.push("<td class=\"title\">Modification</td>")
             html.push("<td class=\"title\">Remove</td>")
-            html.push("<tr>")
+            html.push("</tr>")
 
             data.forEach(element => {
                 html.push("<tr id=\"labors"+element._id.$oid+"\">")   

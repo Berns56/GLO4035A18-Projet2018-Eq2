@@ -213,7 +213,7 @@ label, input, select {
     function getItem(type){
         switch(type){
             case "purchase": 
-                if(document.querySelector("#selectPurchaseConsumable").value == "HE"){
+                if(document.querySelector("#selectPurchaseConsumable").value == "HE" || document.querySelector("#selectPurchaseConsumable").value == "Soap"){
                     return ("Consumable - " + document.querySelector("#selectPurchaseConsumable").value + " - " + document.querySelector("#selectionPurchaseHE").value)
                 } else if(document.querySelector("#selectPurchaseConsumable").value == "Base Oil"){
                     return ("Consumable - " + document.querySelector("#selectPurchaseConsumable").value + " - " + document.querySelector("#selectionPurchaseBaseOil").value)
@@ -224,7 +224,7 @@ label, input, select {
             break;
 
             case "density":
-                if(document.querySelector("#selectDensityConsumable").value == "HE"){
+                if(document.querySelector("#selectDensityConsumable").value == "HE" || document.querySelector("#selectPurchaseConsumable").value == "Soap"){
                     return ("Consumable - " + document.querySelector("#selectDensityConsumable").value + " - " + document.querySelector("#selectionDensityHE").value)
                 } else if(document.querySelector("#selectDensityConsumable").value == "Base Oil"){
                     return ("Consumable - " + document.querySelector("#selectDensityConsumable").value + " - " + document.querySelector("#selectionDensityBaseOil").value)
@@ -234,7 +234,7 @@ label, input, select {
             break;
 
             case "labor": 
-                if(document.querySelector("#selectLaborsConsumable").value == "HE"){
+                if(document.querySelector("#selectLaborsConsumable").value == "HE" || document.querySelector("#selectPurchaseConsumable").value == "Soap"){
                     return ("Consumable - " + document.querySelector("#selectLaborsConsumable").value + " - " + document.querySelector("#selectionLaborsHE").value)
                 } else if(document.querySelector("#selectLaborsConsumable").value == "Base Oil"){
                     return ("Consumable - " + document.querySelector("#selectLaborsConsumable").value + " - " + document.querySelector("#selectionLaborsBaseOil").value)
@@ -357,7 +357,6 @@ label, input, select {
         </select>
         <span id="otherPurchaseConsumable"> - </span>
         <select id = "selectionPurchaseHE">
-            <option value=""></option>
             <option value = "Pin Blanc">Pin Blanc</option>
             <option value = "Eucalyptus Radiata">Eucalyptus Radiata</option>
             <option value = "Lavender">Lavender</option>
@@ -382,7 +381,6 @@ label, input, select {
             <option value = "Rosemary">Rosemary</option>
         </select>
         <select id = "selectionPurchaseBaseOil">
-            <option value=""></option>
             <option value = "Cire Abeille">Cire Abeille</option>
             <option value = "Olive Oil">Olive Oil</option>
             <option value = "Jojoba Oil">Jojoba Oil</option>
@@ -423,7 +421,6 @@ label, input, select {
         </select>
         <span id="otherDensityConsumable"> - </span>
         <select id = "selectionDensityHE">
-            <option value=""></option>
             <option value = "Pin Blanc">Pin Blanc</option>
             <option value = "Eucalyptus Radiata">Eucalyptus Radiata</option>
             <option value = "Lavender">Lavender</option>
@@ -448,7 +445,6 @@ label, input, select {
             <option value = "Rosemary">Rosemary</option>
         </select>
         <select id = "selectionDensityBaseOil">
-            <option value=""></option>
             <option value="Cire Abeille">Cire Abeille</option>
             <option value="Olive Oil">Olive Oil</option>
             <option value="Jojoba Oil">Jojoba Oil</option>
@@ -480,7 +476,6 @@ label, input, select {
         </select>
         <span id="otherLaborsConsumable"> - </span>
         <select id = "selectionLaborsHE">
-            <option value=""></option>
             <option value = "Pin Blanc">Pin Blanc</option>
             <option value = "Eucalyptus Radiata">Eucalyptus Radiata</option>
             <option value = "Lavender">Lavender</option>
@@ -505,7 +500,6 @@ label, input, select {
             <option value = "Rosemary">Rosemary</option>
         </select>
         <select id = "selectionLaborsBaseOil">
-            <option value=""></option>
             <option value = "Cire Abeille">Cire Abeille</option>
             <option value = "Olive Oil">Olive Oil</option>
             <option value = "Jojoba Oil">Jojoba Oil</option>

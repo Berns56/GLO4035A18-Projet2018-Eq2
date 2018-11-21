@@ -43,9 +43,28 @@ button {
 label, input, select {
     margin-bottom: 15px;
 }
+
+#tableTotalCost{
+    margin-bottom: 30px;
+    width: 30%;
+    border-collapse: collapse;
+}
+
+td{
+    border: 1px solid #777;
+}
+
+.tableTitle, .title{
+    text-align: center;
+    font-weight: bold;
+}
+
 </style>
 
 <script>
+    let costHE = 0
+    let costBaseOil = 0
+    let costSoap = 0
 
     function ajax_post(url, data, callback) {
         let xhr = new XMLHttpRequest();
@@ -88,8 +107,23 @@ label, input, select {
         });
 
         document.querySelector("#btnGetTotal").addEventListener('click', function (event) {
+            document.querySelector("#totalCost").innerHTML = ""
             getTotal()
         });
+
+        function calculConsumableTotal(cost){
+            let strCost = cost._id.split(" - ")
+
+            switch(strCost[1]){
+                case "HE": costHE += cost.sum 
+                break;
+                case "Base Oil": costBaseOil += cost.sum 
+                break;
+                case "Soap": costSoap += cost.sum 
+                break;
+                default:break;
+            }
+        }
 
         function getTotal(){
             let date = document.querySelector("#tbPurchaseDate").value
@@ -106,8 +140,60 @@ label, input, select {
                     } else if(data.result == "Failure"){
                         alert("Error: can't delete this item")
                     } else{
-                        //document.querySelector("#totalCost").innerHTML = "Total cost on " + date + " : " + data.totalCost + " $"
-                        document.querySelector("#totalCost").innerHTML = JSON.stringify(data)
+                        let html = []
+                        let consumableTotalCost = 0
+
+                        html.push("<table id=\"tableTotalCost\">")
+                        html.push("<tr><td class=\"tableTitle\" colspan='2'>"+date+"</td></tr>")
+                        html.push("<tr>")  
+                        html.push("<td class=\"title\">Type</td>")
+                        html.push("<td class=\"title\">Total cost</td>")
+                        html.push("</tr>") 
+
+                        data.sort(function(a, b) {
+                            if(a._id < b._id) { return -1; }
+                            if(a._id > b._id) { return 1; }
+                            return 0;
+                        }); 
+
+                        data.forEach(elem => {
+                            html.push("<tr>")
+                            html.push("<td class=\"center\">"+elem._id+"</td>")
+                            html.push("<td class=\"center\">"+elem.sum+" $</td>")
+                            html.push("</tr>")
+                            
+                            calculConsumableTotal(elem)
+                            consumableTotalCost += elem.sum
+                        })
+                        
+                        if(costHE > 0){
+                            html.push("<tr>")
+                            html.push("<td class=\"center\">Consumable - HE</td>")
+                            html.push("<td class=\"center\">"+costHE+" $</td>")
+                            html.push("</tr>")
+                        }
+
+                        if(costBaseOil > 0){
+                            html.push("<tr>")
+                            html.push("<td class=\"center\">Consumable - Base Oil</td>")
+                            html.push("<td class=\"center\">"+costBaseOil+" $</td>")
+                            html.push("</tr>")
+                        }
+
+                        if(costSoap > 0){
+                            html.push("<tr>")
+                            html.push("<td class=\"center\">Consumable - Soap</td>")
+                            html.push("<td class=\"center\">"+costSoap+" $</td>")
+                            html.push("</tr>")
+                        }
+
+                        html.push("<tr>")
+                        html.push("<td class=\"center\">Consumable</td>")
+                        html.push("<td class=\"center\">"+consumableTotalCost+" $</td>")
+                        html.push("</tr>")
+                        html.push("</table>")
+
+                        document.querySelector("#totalCost").insertAdjacentHTML("beforeend", html.join("\n"))
                     }
                 })
             }

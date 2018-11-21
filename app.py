@@ -265,9 +265,6 @@ def totalCostPurchase():
     try:
         if(request.headers['Content-Type']=="application/json"):
             purchase = request.get_json()
-            #regex = "/%s/" % purchase["type"]
-            #myquery = {"$and":[{"date":purchase["date"]}, {"item" : {"$regex": regex}}]}
-            #return dumps(purchasesDb.find(myquery))
             myquery =  [{"$unwind":"$item"},{"$match":{"date":purchase["date"]}}, {"$group" : {"_id" : "$item", "sum" : {"$sum": "$total"}}}]
             return dumps(purchasesDb.aggregate(myquery))
         else:

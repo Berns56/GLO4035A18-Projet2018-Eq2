@@ -139,7 +139,7 @@ label, input, select {
     }
 
     function getItem(){
-        if(document.querySelector("#selectConsumable").value == "HE"){
+        if(document.querySelector("#selectConsumable").value == "HE" || document.querySelector("#selectConsumable").value == "Soap"){
             return ("Consumable - " + document.querySelector("#selectConsumable").value + " - " + document.querySelector("#selectionHE").value)
         } else if(document.querySelector("#selectConsumable").value == "Base Oil"){
             return ("Consumable - " + document.querySelector("#selectConsumable").value + " - " + document.querySelector("#selectionBaseOil").value)
@@ -207,7 +207,6 @@ label, input, select {
     </select>
     <span id="otherConsumable"> - </span>
     <select id = "selectionHE">
-        <option value=""></option>
         <option value = "Pin Blanc">Pin Blanc</option>
         <option value = "Eucalyptus Radiata">Eucalyptus Radiata</option>
         <option value = "Lavender">Lavender</option>
@@ -232,7 +231,6 @@ label, input, select {
         <option value = "Rosemary">Rosemary</option>
     </select>
     <select id = "selectionBaseOil">
-        <option value=""></option>
         <option value="Cire Abeille">Cire Abeille</option>
         <option value="Olive Oil">Olive Oil</option>
         <option value="Jojoba Oil">Jojoba Oil</option>

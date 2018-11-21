@@ -182,7 +182,7 @@ label, input, select {
     }
 
     function getItem(){
-        if(document.querySelector("#selectConsumable").value == "HE"){
+        if(document.querySelector("#selectConsumable").value == "HE" || document.querySelector("#selectConsumable").value == "Soap"){
             return ("Consumable - " + document.querySelector("#selectConsumable").value + " - " + document.querySelector("#selectionHE").value)
         } else if(document.querySelector("#selectConsumable").value == "Base Oil"){
             return ("Consumable - " + document.querySelector("#selectConsumable").value + " - " + document.querySelector("#selectionBaseOil").value)
