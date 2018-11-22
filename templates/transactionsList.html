@@ -155,6 +155,10 @@ a:hover {
             window.scrollTo(0, top); 
         });
 
+        document.querySelector("#divAchat").innerHTML = "Purchases loading..."
+        document.querySelector("#divDensity").innerHTML = "Densities loading..."
+        document.querySelector("#divTranformation").innerHTML = "Labors loading..."
+
         getPurchases()
         getDensities()
         getLabors()   
@@ -197,6 +201,7 @@ a:hover {
                 listId.push(element._id.$oid)  
             });
             html.push("</table>")
+            resultContainer.innerHTML = ""
             resultContainer.insertAdjacentHTML("beforeend", html.join("\n"))
 
             listId.forEach(id => {
@@ -272,6 +277,7 @@ a:hover {
                 listId.push(element._id.$oid)   
             });
             html.push("</table>")
+            resultContainer.innerHTML = ""
             resultContainer.insertAdjacentHTML("beforeend", html.join("\n"))
 
             listId.forEach(id => {
@@ -345,7 +351,10 @@ a:hover {
                 listId.push(element._id.$oid)   
             });
             html.push("</table>")
+
+            resultContainer.innerHTML = ""
             resultContainer.insertAdjacentHTML("beforeend", html.join("\n"))
+
             listId.forEach(id => {
                 document.querySelector("#btnModifyLabors"+id).addEventListener('click', function (event) {
                     modifyLabors(id)

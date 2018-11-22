@@ -127,7 +127,7 @@ td{
         });
 
         document.querySelector("#btnleftQuantity").addEventListener('click', function (event) {
-            document.querySelector("#leftQuantity").innerHTML = ""
+            document.querySelector("#leftQuantity").innerHTML = "Loading..."
             let date = document.querySelector("#tbPurchaseDate").value
             getLeftQuantity(date)
         });
@@ -168,7 +168,8 @@ td{
                 html.push("</tr>")
             })
 
-             html.push("</table>")
+            html.push("</table>")
+            document.querySelector("#leftQuantity").innerHTML = ""
             document.querySelector("#leftQuantity").insertAdjacentHTML("beforeend", html.join("\n"))   
          
         }

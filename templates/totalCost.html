@@ -106,7 +106,7 @@ td{
         });
 
         document.querySelector("#btnGetTotal").addEventListener('click', function (event) {
-            document.querySelector("#totalCost").innerHTML = ""
+            document.querySelector("#totalCost").innerHTML = "Loading..."
             getTotal()
         });
 
@@ -195,7 +195,7 @@ td{
                         html.push("<td class=\"center\">"+consumableTotalCost+" $</td>")
                         html.push("</tr>")
                         html.push("</table>")
-
+                        document.querySelector("#totalCost").innerHTML = ""
                         document.querySelector("#totalCost").insertAdjacentHTML("beforeend", html.join("\n"))
                     }
                 })
