@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Left quantity</title>
+    <title>Quantity left</title>
 </head>
 
 <style>
@@ -43,11 +43,48 @@ button {
 label, input, select {
     margin-bottom: 15px;
 }
+
+#tableTotalCost{
+    margin-bottom: 30px;
+    width: 30%;
+    border-collapse: collapse;
+}
+
+td{
+    border: 1px solid #777;
+}
+
+.tableTitle, .title{
+    text-align: center;
+    font-weight: bold;
+}
 </style>
 
 <script>
+    let densities = [,]
 
-    function ajax_get(url, data, callback) {
+    let purchaseQuantity = []
+    let laborsQuantity = []
+
+    function ajax_get(url, callback) {
+        let xmlhttp = new XMLHttpRequest();
+        xmlhttp.onreadystatechange = function() {
+            if (xmlhttp.readyState == 4 && xmlhttp.status == 200) {
+                try {
+                    var data = JSON.parse(xmlhttp.responseText);
+                } catch(err) {
+                    console.log(err.message + " in " + xmlhttp.responseText);
+                    return;
+                }
+                callback(data);
+            }
+        };
+ 
+        xmlhttp.open("GET", url, true);
+        xmlhttp.send();
+    }
+
+    function postAjax(url, data, callback) {
         let xhr = new XMLHttpRequest();
         xhr.onreadystatechange = function () {
             if (xhr.readyState === 4 && xhr.status === 200) {
@@ -59,13 +96,18 @@ label, input, select {
                 }
             }
         };
-
         xhr.open("POST", url, true);
         xhr.setRequestHeader("Content-Type", "application/json");
         xhr.send(data);
     }
 
     function load(){
+
+        ajax_get('/transactions/densities', function(data) {
+            data.forEach(element => {
+                densities.push([element._id.$oid,(parseFloat(element.g)/parseFloat(element.ml))])
+            })
+         })
 
         document.querySelector("#li_Home").addEventListener('click', function (event) {
             window.location.href = "/"
@@ -87,32 +129,40 @@ label, input, select {
             window.location.href = "/leftQuantity"
         });
 
-        document.querySelector("#btnGetTotal").addEventListener('click', function (event) {
-            getTotal()
+        document.querySelector("#btnleftQuantity").addEventListener('click', function (event) {
+            document.querySelector("#leftQuantity").innerHTML = ""
+            let date = document.querySelector("#tbPurchaseDate").value
+            getLeftQuantity(date)
         });
 
-        function getTotal(){
-            let date = document.querySelector("#tbPurchaseDate").value
-            let unit = document.querySelector("#selectPurchaseUnit").value
-            let type = document.querySelector("#selectPurchaseConsumable").value
-
-            json = JSON.stringify({"date":date, "unit": unit, "type": type})
-
-            if(!date)
-                alert("Error: Please insert a date")
-            else{
-                ajax_get("/averageCost", json, function(data){
-
-                    if(data === undefined || data.length == 0){
-                        document.querySelector("#totalCost").innerHTML = "Sorry, there's no average cost for this date!"
-                    } else if(data.result == "Failure"){
-                        alert("Error: can't delete this item")
-                    } else{
-                        document.querySelector("#totalCost").innerHTML = "average cost of " + type + " on " + date + " : " + data.avgCost + " $/"+unit
-                    }
-                })
-            }
+        async function getLeftQuantity(date){
+            await Promise.all([getQuantityPurchase(date), getQuantityLabor(date)]);
+            console.log(laborsQuantity)
+            console.log(purchaseQuantity)
         }
+
+        function getQuantityPurchase(date){
+            return new Promise(function (resolve, reject) {
+
+                let queryData = JSON.stringify({"date":date})
+                postAjax('/leftQuantity/purchase', queryData , function(data) {
+                    purchaseQuantity = JSON.parse(JSON.stringify(data))
+                    resolve(purchaseQuantity)
+                })
+            })
+        }
+
+        function getQuantityLabor(date){
+            return new Promise(function (resolve, reject) {
+
+                let queryData = JSON.stringify({"date":date})
+                postAjax('/leftQuantity', queryData , function(data) {
+                    laborsQuantity = JSON.parse(JSON.stringify(data))
+                    resolve(purchaseQuantity)
+                })
+            })
+        }
+
     }
 </script>
 
@@ -137,29 +187,14 @@ label, input, select {
             </ul>
     </header>
 
-    <h1>Left quantity</h1>
+    <h1>Quantity left</h1>
 
-    <label>Select the date, unit and the consumable category: </label><br><br>
+    <label>Select the date to display the quantity left: </label><br><br>
 
-    <label for="tbPurchaseDate">Date: </label><input type="text" id="tbPurchaseDate"><br>
-    <label for="selectPurchaseUnit">Unit: </label>
-    <select id="selectPurchaseUnit">
-        <option value="ml">ml</option>
-        <option value="g">g</option>
-    </select>
-    <label for="tbPurchaseItem">Item : Consumable - </label>
-    <select id="selectPurchaseConsumable">
-        <option value="HE">HE</option>
-        <option value="Base Oil">Base Oil</option>
-        <option value="Soap">Soap</option>
-        <option value="Additive">Additive</option>
-        <option value="Soude Caustique">Soude Caustique</option>
-        <option value="Emballage">Emballage</option>
-    </select>
-    <br>
-    <button type='button' id="btnGetTotal">Get total</button>
+    <label for="tbPurchaseDate">Date: </label><input type="date" id="tbPurchaseDate"><br>
+    <button type='button' id="btnleftQuantity">Get left quantity</button>
     <br><br>
-    <div id="totalCost">
+    <div id="leftQuantity">
 
     </div>
 </body>

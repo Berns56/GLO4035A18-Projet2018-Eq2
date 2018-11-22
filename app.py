@@ -39,6 +39,10 @@ def import_transactions():
                     dataItem["tax"] = float(strTax)
                     strDate = dataItem["date"]
                     dataItem["date"] = utilities.dateFormat(strDate)
+                    strG = dataItem["g"]
+                    dataItem["g"] = float(strG)
+                    strML = dataItem["ml"]
+                    dataItem["ml"] = float(strML)
                     purchasesDb.insert_one(dataItem)
                 elif utilities.schemaSoapValidation(dataItem, utilities.SCHEMA_SOAP_DENSITY): 
                     strG = dataItem["g"]
@@ -105,6 +109,10 @@ def add_Purchase():
             purchase["stotal"] = float(strSTotal)
             strTax = purchase["tax"]
             purchase["tax"] = float(strTax)
+            strG = purchase["g"]
+            purchase["g"] = float(strG)
+            strML = purchase["ml"]
+            purchase["ml"] = float(strML)
             purchasesDb.insert_one(purchase)
         else:
             return jsonify(result="Failure",status="400",message="Purchase has the wrong content type!"),400
@@ -163,6 +171,10 @@ def modify_Purchase():
             purchase["stotal"] = float(strSTotal)
             strTax = purchase["tax"]
             purchase["tax"] = float(strTax)
+            strG = purchase["g"]
+            purchase["g"] = float(strG)
+            strML = purchase["ml"]
+            purchase["ml"] = float(strML)
             myquery = {"_id": ObjectId(purchase["id"])}
             newvalues = { "$set": {"date": purchase["date"], "item":purchase["item"], "qte": purchase["qte"], "total" : purchase["total"], "stotal" : purchase["stotal"], "tax" : purchase["tax"]}}
             purchasesDb.update_one(myquery,newvalues)
@@ -280,6 +292,22 @@ def display_averageCostHtml():
 @application.route("/averageCost", methods=["POST"])
 def averageCostPurchase():
     return jsonify(result="Success", status="200", message="labor deleted"), 200
+
+@application.route("/leftQuantity", methods=["GET"])
+def display_quantityLeftHtml():
+    return send_from_directory('/templates', 'leftQuantity.html')
+
+@application.route("/leftQuantity", methods=["POST"])
+def quantityLeft():
+    reqData = request.get_json()
+    myquery =  [{"$unwind":"$item"},{"$match": {"$and": [{"date":reqData["date"]}, {"type" : "usage"}]}}, {"$group" : {"_id" : "$item", "unit" : "$unit", "sumQte" : {"$sum": "$qte"}}}]
+    return dumps(laborsDb.aggregate(myquery)) 
+
+@application.route("/leftQuantity/purchase", methods=["POST"])
+def getSumMlAndSumGFromPurchase():
+    reqData = request.get_json()
+    myquery =  [{"$unwind":"$item"},{"$match": {"date":reqData["date"]}}, {"$group" : {"_id" : "$item", "sumMl" : {"$sum": "$ml"}, "sumG" : {"$sum": "$g"}}}]
+    return dumps(purchasesDb.aggregate(myquery)) 
 
 if __name__ ==  "__main__":
     application.run(host="0.0.0.0", port = 80)

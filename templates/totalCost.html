@@ -58,7 +58,6 @@ td{
     text-align: center;
     font-weight: bold;
 }
-
 </style>
 
 <script>
@@ -156,8 +155,12 @@ td{
                             return 0;
                         }); 
 
-                        data.forEach(elem => {
-                            html.push("<tr>")
+                        data.forEach(function(elem, idx, array){
+                            if(idx === array.length - 1){
+                                html.push("<tr class=\"total\">")
+                            } else
+                                html.push("<tr>")
+
                             html.push("<td class=\"center\">"+elem._id+"</td>")
                             html.push("<td class=\"center\">"+elem.sum+" $</td>")
                             html.push("</tr>")
@@ -187,7 +190,7 @@ td{
                             html.push("</tr>")
                         }
 
-                        html.push("<tr>")
+                        html.push("<tr class=\"total\">")
                         html.push("<td class=\"center\">Consumable</td>")
                         html.push("<td class=\"center\">"+consumableTotalCost+" $</td>")
                         html.push("</tr>")
