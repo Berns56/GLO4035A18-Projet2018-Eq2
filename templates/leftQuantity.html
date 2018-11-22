@@ -133,11 +133,13 @@ td{
         });
 
         function getFactorGtoMl(comsumable){
-           densities.forEach(density=>{
-                if(density.item == comsumable)
-                    return density.g/density.ml
-            })
-            return 1
+            if(!(densities.find(density => density.item == comsumable)))
+                return 1
+            else{
+                let index = densities.findIndex(density => density.item == comsumable)
+                return densities[index].g/densities[index].ml
+            }
+            
         }
 
         async function getLeftQuantity(date){
