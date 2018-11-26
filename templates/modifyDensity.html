@@ -155,19 +155,23 @@ label, input, select {
         
         let item = getItem()
 
-        let queryData = JSON.stringify({"id": id, 
-                                    "g": g, 
-                                    "ml": ml, 
-                                    "item": item})
+         if(!g || !ml || !(parseFloat(ml) > 0)  || !(parseFloat(g) > 0)){
+            alert("Error: Density must have value and they must be higher than 0")
+        } else{
+            let queryData = JSON.stringify({"id": id, 
+                                        "g": g, 
+                                        "ml": ml, 
+                                        "item": item})
 
-        putAjax('/transactions/modify/density', queryData , function(data) {
-            if(data.result == "Failure" || !(data.result)){
-                alert("Error: There was an error when exporting your item. Check your informations")
-            } else{
-                alert("Success: Your item was modify successfully")
-                localStorage.clear()
-            }
-        })
+            putAjax('/transactions/modify/density', queryData , function(data) {
+                if(data.result == "Failure" || !(data.result)){
+                    alert("Error: There was an error when exporting your item. Check your informations")
+                } else{
+                    alert("Success: Your item was modify successfully")
+                    localStorage.clear()
+                }
+            })
+        }
     }
 
 </script>

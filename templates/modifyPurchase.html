@@ -181,24 +181,36 @@ label, input, select {
         
         let item = getItem()
 
-        let queryData = JSON.stringify({"id": id, 
-                                    "date": date, 
-                                    "item": item, 
-                                    "qte": qte, 
-                                    "unit": unit, 
-                                    "total": total, 
-                                    "stotal": stotal, 
-                                    "tax": tax})
-
-
-        putAjax('/transactions/modify/purchase', queryData , function(data) {
-            if(data.result == "Failure" || !(data.result)){
-                alert("Error: There was an error when exporting your item. Check your informations")
-            } else{
-                alert("Success: Your item was modify successfully")
-                localStorage.clear()
+        if(unit && qte && stotal && tax && total && date && stotal != undefined && tax != undefined && total != undefined){
+            if( parseFloat(stotal)< 0 ||  parseFloat(tax) < 0 && parseFloat(total) < 0){
+                alert("Error: prices can't be lower than 0")
+            } else if(qte < 1){
+                alert("Error: quantity must be higher than 0")
             }
-        })
+            else{
+
+                let queryData = JSON.stringify({"id": id, 
+                                            "date": date, 
+                                            "item": item, 
+                                            "qte": qte, 
+                                            "unit": unit, 
+                                            "total": total, 
+                                            "stotal": stotal, 
+                                            "tax": tax})
+
+
+                putAjax('/transactions/modify/purchase', queryData , function(data) {
+                    if(data.result == "Failure" || !(data.result)){
+                        alert("Error: There was an error when exporting your item. Check your informations")
+                    } else{
+                        alert("Success: Your item was modify successfully")
+                        localStorage.clear()
+                    }
+                })
+            }
+        }else{
+            alert("Error: There was informations that were incorrect. Check your informations")
+        }
     }
 
     function getItem(){

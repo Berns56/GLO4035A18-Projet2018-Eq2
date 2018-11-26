@@ -162,23 +162,28 @@ label, input, select {
         let type = document.querySelector("#selectType").value
         let item = getItem()
 
-        let queryData = JSON.stringify({"id": id, 
-                                    "date": date, 
-                                    "item": item, 
-                                    "qte": qte, 
-                                    "unit": unit, 
-                                    "type": type, 
-                                    "jobId": jobId})
+        if(unit && qte && date && type && jobId && item){
+
+            let queryData = JSON.stringify({"id": id, 
+                                        "date": date, 
+                                        "item": item, 
+                                        "qte": qte, 
+                                        "unit": unit, 
+                                        "type": type, 
+                                        "jobId": jobId})
 
 
-        putAjax('/transactions/modify/labor', queryData , function(data) {
-            if(data.result == "Failure" || !(data.result)){
-                alert("Error: There was an error when exporting your item. Check your informations")
-            } else{
-                alert("Success: Your item was modify successfully")
-                localStorage.clear()
-            }
-        })
+            putAjax('/transactions/modify/labor', queryData , function(data) {
+                if(data.result == "Failure" || !(data.result)){
+                    alert("Error: There was an error when exporting your item. Check your informations")
+                } else{
+                    alert("Success: Your item was modify successfully")
+                    localStorage.clear()
+                }
+            })
+        }else{
+            alert("Error: There was informations that were incorrect. Check your informations")
+        }
     }
 
     function getItem(){
