@@ -105,7 +105,7 @@ label, input, select {
      
 
         document.querySelector("#tbPurchaseId").value = id
-        document.querySelector("#tbPurchaseJobId").value = id
+        document.querySelector("#tbPurchaseJobId").value = jobId
         document.querySelector("#tbPurchaseQte").value = qte
         document.querySelector("#tbPurchaseDate").value = date
 
@@ -162,7 +162,7 @@ label, input, select {
         let type = document.querySelector("#selectType").value
         let item = getItem()
 
-        if(unit && qte && date && type && jobId && item){
+        if(unit && qte && date && type && jobId && item && parseInt(jobId) > 1 && parseInt(qte) > 1){
 
             let queryData = JSON.stringify({"id": id, 
                                         "date": date, 
@@ -170,7 +170,7 @@ label, input, select {
                                         "qte": qte, 
                                         "unit": unit, 
                                         "type": type, 
-                                        "jobId": jobId})
+                                        "job_id": jobId})
 
 
             putAjax('/transactions/modify/labor', queryData , function(data) {
@@ -178,7 +178,7 @@ label, input, select {
                     alert("Error: There was an error when exporting your item. Check your informations")
                 } else{
                     alert("Success: Your item was modify successfully")
-                    localStorage.clear()
+                    window.location.href = "/transactions"
                 }
             })
         }else{
@@ -285,6 +285,7 @@ label, input, select {
             <option value="usage">usage</option>
             <option value="create">create</option>
     </select>
+    <br>
     <button type='button' id="btnModifyPurchase">Modify</button>
     
 </body>

@@ -42,6 +42,28 @@ label, input, select {
 </style>
 
 <script type="text/javascript">
+
+    let densities = []
+
+    function ajax_get(url, callback) {
+        let xmlhttp = new XMLHttpRequest();
+        xmlhttp.onreadystatechange = function() {
+            if (xmlhttp.readyState == 4 && xmlhttp.status == 200) {
+                //console.log('responseText:' + xmlhttp.responseText);
+                try {
+                    var data = JSON.parse(xmlhttp.responseText);
+                } catch(err) {
+                    console.log(err.message + " in " + xmlhttp.responseText);
+                    return;
+                }
+                callback(data);
+            }
+        };
+ 
+        xmlhttp.open("GET", url, true);
+        xmlhttp.send();
+    }
+
     function postAjax(url, data, callback) {
         let xhr = new XMLHttpRequest();
         xhr.onreadystatechange = function () {
@@ -120,67 +142,6 @@ label, input, select {
             calculTotal()
         })
 
-        function checkSelections(){
-            if(document.querySelector("#selectPurchaseConsumable").value == "HE" || document.querySelector("#selectPurchaseConsumable").value == "Soap"){
-                document.querySelector("#selectionPurchaseHE").style.display = "inline"
-                document.querySelector("#selectionPurchaseBaseOil").style.display = "none"
-                document.querySelector("#otherPurchaseConsumable").style.display = "inline"
-
-            } else if(document.querySelector("#selectPurchaseConsumable").value == "Base Oil"){
-                document.querySelector("#selectionPurchaseHE").style.display = "none"
-                document.querySelector("#selectionPurchaseBaseOil").style.display = "inline"
-                document.querySelector("#otherPurchaseConsumable").style.display = "inline"
-
-            } else{
-                document.querySelector("#selectionPurchaseHE").style.display = "none"
-                document.querySelector("#selectionPurchaseBaseOil").style.display = "none"
-                document.querySelector("#otherPurchaseConsumable").style.display = "none"
-            }
-
-            if(document.querySelector("#selectDensityConsumable").value == "HE" || document.querySelector("#selectDensityConsumable").value == "Soap"){
-                document.querySelector("#selectionDensityHE").style.display = "inline"
-                document.querySelector("#selectionDensityBaseOil").style.display = "none"
-                document.querySelector("#otherDensityConsumable").style.display = "inline"
-
-            } else if(document.querySelector("#selectDensityConsumable").value == "Base Oil"){
-                document.querySelector("#selectionDensityHE").style.display = "none"
-                document.querySelector("#selectionDensityBaseOil").style.display = "inline"
-                document.querySelector("#otherDensityConsumable").style.display = "inline"
-
-            } else{
-                document.querySelector("#selectionDensityHE").style.display = "none"
-                document.querySelector("#selectionDensityBaseOil").style.display = "none"
-                document.querySelector("#otherDensityConsumable").style.display = "none"
-            }
-
-            if(document.querySelector("#selectLaborsConsumable").value == "HE" || document.querySelector("#selectLaborsConsumable").value == "Soap"){
-                document.querySelector("#selectionLaborsHE").style.display = "inline"
-                document.querySelector("#selectionLaborsBaseOil").style.display = "none"
-                document.querySelector("#otherLaborsConsumable").style.display = "inline"
-
-            } else if(document.querySelector("#selectLaborsConsumable").value == "Base Oil"){
-                document.querySelector("#selectionLaborsHE").style.display = "none"
-                document.querySelector("#selectionLaborsBaseOil").style.display = "inline"
-                document.querySelector("#otherLaborsConsumable").style.display = "inline"
-
-            } else{
-                document.querySelector("#selectionLaborsHE").style.display = "none"
-                document.querySelector("#selectionLaborsBaseOil").style.display = "none"
-                document.querySelector("#otherLaborsConsumable").style.display = "none"
-            }
-        }   
-
-        function calculTotal(){
-            let stotal = document.querySelector("#tbPurchaseStotal").value.replace(/\$/g,'').replace(/\ /g,'')
-            let tax = document.querySelector("#tbPurchaseTax").value.replace(/\$/g,'').replace(/\ /g,'')
-
-            let total = parseFloat(stotal) + parseFloat(tax)
-
-            document.querySelector("#tbPurchaseStotal").value = parseFloat(stotal).toFixed(2) + " $"
-            document.querySelector("#tbPurchaseTax").value = parseFloat(tax).toFixed(2) + " $"
-            document.querySelector("#tbPurchaseTotal").value = total.toFixed(2)  + " $"
-        }
-
         document.querySelector("#btnAddPurchase").addEventListener('click', function (event) {
             addPurchase()
         });
@@ -192,7 +153,68 @@ label, input, select {
         document.querySelector("#btnAddLabors").addEventListener('click', function (event) {
             addLabor()
         });
-    } 
+    }
+
+    function checkSelections(){
+        if(document.querySelector("#selectPurchaseConsumable").value == "HE" || document.querySelector("#selectPurchaseConsumable").value == "Soap"){
+            document.querySelector("#selectionPurchaseHE").style.display = "inline"
+            document.querySelector("#selectionPurchaseBaseOil").style.display = "none"
+            document.querySelector("#otherPurchaseConsumable").style.display = "inline"
+
+        } else if(document.querySelector("#selectPurchaseConsumable").value == "Base Oil"){
+            document.querySelector("#selectionPurchaseHE").style.display = "none"
+            document.querySelector("#selectionPurchaseBaseOil").style.display = "inline"
+            document.querySelector("#otherPurchaseConsumable").style.display = "inline"
+
+        } else{
+            document.querySelector("#selectionPurchaseHE").style.display = "none"
+            document.querySelector("#selectionPurchaseBaseOil").style.display = "none"
+            document.querySelector("#otherPurchaseConsumable").style.display = "none"
+        }
+
+        if(document.querySelector("#selectDensityConsumable").value == "HE" || document.querySelector("#selectDensityConsumable").value == "Soap"){
+            document.querySelector("#selectionDensityHE").style.display = "inline"
+            document.querySelector("#selectionDensityBaseOil").style.display = "none"
+            document.querySelector("#otherDensityConsumable").style.display = "inline"
+
+        } else if(document.querySelector("#selectDensityConsumable").value == "Base Oil"){
+            document.querySelector("#selectionDensityHE").style.display = "none"
+            document.querySelector("#selectionDensityBaseOil").style.display = "inline"
+            document.querySelector("#otherDensityConsumable").style.display = "inline"
+
+        } else{
+            document.querySelector("#selectionDensityHE").style.display = "none"
+            document.querySelector("#selectionDensityBaseOil").style.display = "none"
+            document.querySelector("#otherDensityConsumable").style.display = "none"
+        }
+
+        if(document.querySelector("#selectLaborsConsumable").value == "HE" || document.querySelector("#selectLaborsConsumable").value == "Soap"){
+            document.querySelector("#selectionLaborsHE").style.display = "inline"
+            document.querySelector("#selectionLaborsBaseOil").style.display = "none"
+            document.querySelector("#otherLaborsConsumable").style.display = "inline"
+
+        } else if(document.querySelector("#selectLaborsConsumable").value == "Base Oil"){
+            document.querySelector("#selectionLaborsHE").style.display = "none"
+            document.querySelector("#selectionLaborsBaseOil").style.display = "inline"
+            document.querySelector("#otherLaborsConsumable").style.display = "inline"
+
+        } else{
+            document.querySelector("#selectionLaborsHE").style.display = "none"
+            document.querySelector("#selectionLaborsBaseOil").style.display = "none"
+            document.querySelector("#otherLaborsConsumable").style.display = "none"
+        }
+    }   
+
+    function calculTotal(){
+        let stotal = document.querySelector("#tbPurchaseStotal").value.replace(/\$/g,'').replace(/\ /g,'')
+        let tax = document.querySelector("#tbPurchaseTax").value.replace(/\$/g,'').replace(/\ /g,'')
+
+        let total = parseFloat(stotal) + parseFloat(tax)
+
+        document.querySelector("#tbPurchaseStotal").value = parseFloat(stotal).toFixed(2) + " $"
+        document.querySelector("#tbPurchaseTax").value = parseFloat(tax).toFixed(2) + " $"
+        document.querySelector("#tbPurchaseTotal").value = total.toFixed(2)  + " $"
+    }
 
     function checkSelectionsTransaction(){
         if(document.querySelector("#selectTransaction").value == "Purchase"){
@@ -258,7 +280,7 @@ label, input, select {
         if(unit && qte && stotal && tax && total && date && stotal != undefined && tax != undefined && total != undefined){
             if( parseFloat(stotal)< 0 ||  parseFloat(tax) < 0 && parseFloat(total) < 0){
                 alert("Error: prices can't be lower than 0")
-            } else if(qte < 1){
+            } else if(parseInt(qte) < 1){
                 alert("Error: quantity must be higher than 0")
             }
             else{
@@ -274,7 +296,8 @@ label, input, select {
                     if(data.result == "Failure" || !(data.result)){
                         alert("Error: There was an error when exporting your item. Check your informations")
                     } else{
-                        alert("Success: Your item was exported successfully")
+                        alert("Success: Your item was added successfully")
+                        window.location.href = "/transactions"
                     }
                 })
             }
@@ -283,13 +306,28 @@ label, input, select {
         }
     }
     
-    function addDensity(){
+    function getDensities(){
+        return new Promise(function (resolve, reject) {
+            ajax_get('/transactions/densities', function(data) {
+                data.forEach(element => {
+                    densities.push(element)
+                })
+                resolve(data)
+            })
+        })
+    }
+    
+    async function addDensity(){
+        await Promise.all([getDensities()]);
+
         let g = document.querySelector("#tbDensityG").value 
         let ml = document.querySelector("#tbDensityMl").value 
         let item = getItem("density")
-
-        if(!g || !ml || !(parseFloat(ml) > 0)  || !(parseFloat(g) > 0)){
-            alert("Error: Density must have value and they must be higher than 0")
+        
+        if(checkIfDensitiesAlreadyExist(item)){
+            alert("Error: there's already a density for this consumable")
+        } else if(!g || !ml || !(parseFloat(ml) > 0)  || !(parseFloat(g) > 0)){
+                alert("Error: Density must have value and they must be higher than 0")
         } else{
             let queryData = JSON.stringify({"item": item, 
                                         "g": g, 
@@ -299,13 +337,22 @@ label, input, select {
                 if(data.result == "Failure" || !(data.result)){
                     alert("Error: There was an error when exporting your item. Check your informations")
                 } else{
-                    alert("Success: Your item was exported successfully")
+                    alert("Success: Your item was added successfully")
+                    window.location.href = "/transactions"
                 }
             })
         }
     }
 
-    function addLabor(){
+    function checkIfDensitiesAlreadyExist(item){
+        if(densities.find(density => density.item == item))
+            return true
+        else 
+            return false
+    }
+
+     function addLabor(){
+
         let unit = document.querySelector("#selectLaborsUnit").value
         let qte = document.querySelector("#tbLaborsQte").value 
         let date = document.querySelector("#tbLaborsDate").value
@@ -313,7 +360,7 @@ label, input, select {
         let jobId = document.querySelector("#tbLaborsDate").value
         let item = getItem("labor")
 
-        if(unit && qte && date && type && jobId && item){
+        if(unit && qte && date && type && jobId && item && parseInt(jobId) > 1 && parseInt(qte) > 1){
             let queryData = JSON.stringify({"date": date, 
                             "item": item, 
                             "qte": qte, 
@@ -325,7 +372,8 @@ label, input, select {
                 if(data.result == "Failure" || !(data.result)){
                     alert("Error: There was an error when exporting your item. Check your informations")
                 } else{
-                    alert("Success: Your item was exported successfully")
+                    alert("Success: Your item was added successfully")
+                    window.location.href = "/transactions"
                 }
             })
         }else{
@@ -547,6 +595,7 @@ label, input, select {
                 <option value="usage">usage</option>
                 <option value="create">create</option>
         </select>
+        <br>
         <button type='button' id="btnAddLabors">Add labors</button>
     </div>
 

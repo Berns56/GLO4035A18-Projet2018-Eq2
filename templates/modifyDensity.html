@@ -43,6 +43,27 @@ label, input, select {
 
 <script type="text/javascript">
 
+    let densities = []
+
+    function ajax_get(url, callback) {
+        let xmlhttp = new XMLHttpRequest();
+        xmlhttp.onreadystatechange = function() {
+            if (xmlhttp.readyState == 4 && xmlhttp.status == 200) {
+                //console.log('responseText:' + xmlhttp.responseText);
+                try {
+                    var data = JSON.parse(xmlhttp.responseText);
+                } catch(err) {
+                    console.log(err.message + " in " + xmlhttp.responseText);
+                    return;
+                }
+                callback(data);
+            }
+        };
+
+        xmlhttp.open("GET", url, true);
+        xmlhttp.send();
+    }
+
     function putAjax(url, data, callback) {
         let xhr = new XMLHttpRequest();
         xhr.onreadystatechange = function () {
@@ -148,15 +169,38 @@ label, input, select {
         }
     }
 
-    function modifyDensity(){
+    function getDensities(){
+        return new Promise(function (resolve, reject) {
+            ajax_get('/transactions/densities', function(data) {
+                data.forEach(element => {
+                    densities.push(element)
+                })
+                resolve(data)
+            })
+        })
+    }
+
+    function checkIfDensitiesAlreadyExist(item){
+        if(densities.find(density => density.item == item))
+            return true
+        else 
+            return false
+    }
+
+    async function modifyDensity(){
+        await Promise.all([getDensities()]);
+
         let id = document.querySelector("#tbPurchaseId").value
         let g = document.querySelector("#tbPurchaseG").value 
         let ml = document.querySelector("#tbPurchaseMl").value
         
         let item = getItem()
 
-         if(!g || !ml || !(parseFloat(ml) > 0)  || !(parseFloat(g) > 0)){
-            alert("Error: Density must have value and they must be higher than 0")
+
+        if(checkIfDensitiesAlreadyExist(item) && item != localStorage.getItem("item")){
+            alert("Error: there's already a density for this consumable")
+        } else if(!g || !ml || !(parseFloat(ml) > 0)  || !(parseFloat(g) > 0)){
+                alert("Error: Density must have value and they must be higher than 0")
         } else{
             let queryData = JSON.stringify({"id": id, 
                                         "g": g, 
@@ -168,7 +212,7 @@ label, input, select {
                     alert("Error: There was an error when exporting your item. Check your informations")
                 } else{
                     alert("Success: Your item was modify successfully")
-                    localStorage.clear()
+                    window.location.href = "/transactions"
                 }
             })
         }

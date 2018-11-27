@@ -39,12 +39,14 @@ def import_transactions():
                     dataItem["tax"] = float(strTax)
                     strDate = dataItem["date"]
                     dataItem["date"] = utilities.dateFormat(strDate)
+
                     purchasesDb.insert_one(dataItem)
                 elif utilities.schemaSoapValidation(dataItem, utilities.SCHEMA_SOAP_DENSITY): 
                     strG = dataItem["g"]
                     dataItem["g"] = float(strG)
                     strML = dataItem["ml"]
                     dataItem["ml"] = float(strML)
+
                     densitiesDb.insert_one(dataItem)
                 elif utilities.schemaSoapValidation(dataItem, utilities.SCHEMA_SOAP_LABOR): 
                     strQte = dataItem["qte"]
@@ -53,6 +55,7 @@ def import_transactions():
                     dataItem["job_id"] = int(strJobId)
                     strDate = dataItem["date"]
                     dataItem["date"] = utilities.dateFormat(strDate)
+                    
                     laborsDb.insert_one(dataItem)
                 else:
                     return jsonify(result = "Failure", status = "400", message = "Wrong transaction format!"), 400 
@@ -105,6 +108,7 @@ def add_Purchase():
             purchase["stotal"] = float(strSTotal)
             strTax = purchase["tax"]
             purchase["tax"] = float(strTax)
+
             purchasesDb.insert_one(purchase)
         else:
             return jsonify(result="Failure",status="400",message="Purchase has the wrong content type!"),400
@@ -122,6 +126,7 @@ def add_Density():
             density["g"] = float(strG)
             strML = density["ml"]
             density["ml"] = float(strML)
+
             densitiesDb.insert_one(density)
         else:
             return jsonify(result="Failure",status="400",message="Density has the wrong content type!"),400
@@ -139,6 +144,7 @@ def add_Labor():
             labor["qte"] = int(strQte)
             strJobId = labor["job_id"]
             labor["job_id"] = int(strJobId)
+
             laborsDb.insert_one(labor)
         else:
             return jsonify(result="Failure",status="400",message="Labor has the wrong content type!"),400
@@ -164,7 +170,8 @@ def modify_Purchase():
             strTax = purchase["tax"]
             purchase["tax"] = float(strTax)
             myquery = {"_id": ObjectId(purchase["id"])}
-            newvalues = { "$set": {"date": purchase["date"], "item":purchase["item"], "qte": purchase["qte"], "total" : purchase["total"], "stotal" : purchase["stotal"], "tax" : purchase["tax"]}}
+            newvalues = { "$set": {"date": purchase["date"], "item":purchase["item"], "unit": purchase["unit"],"qte": purchase["qte"], "total" : purchase["total"], "stotal" : purchase["stotal"], "tax" : purchase["tax"]}}
+
             purchasesDb.update_one(myquery,newvalues)
         else:
             return jsonify(result="Failure",status="400",message="Wrong content type!"),400 
@@ -187,6 +194,7 @@ def modify_Density():
             density["ml"] = float(strML)
             myquery = {"_id": ObjectId(density["id"])}
             newvalues = { "$set": {"item":density["item"], "g" : density["g"], "ml" : density["ml"]}}
+
             densitiesDb.update_one(myquery,newvalues)
         else:
             return jsonify(result="Failure",status="400",message="Wrong content type!"),400 
@@ -208,7 +216,8 @@ def modify_Labor():
             strJobId = labor["job_id"]
             labor["job_id"] = int(strJobId)
             myquery = {"_id": ObjectId(labor["id"])}
-            newvalues = { "$set": {"date": labor["date"], "item":labor["item"], "qte": labor["qte"], "jobId" : labor["jobId"], "unit" : labor["unit"], "type" : labor["type"]}}
+            newvalues = { "$set": {"date": labor["date"], "item":labor["item"], "qte": labor["qte"], "jobId" : labor["job_id"], "unit" : labor["unit"], "type" : labor["type"]}}
+
             laborsDb.update_one(myquery,newvalues)
         else:
             return jsonify(result="Failure",status="400",message="Wrong content type!"),400 
@@ -222,6 +231,7 @@ def delete_purchase():
         if(request.headers['Content-Type']=="application/json"):
             purchase = request.get_json()
             myquery = {"_id": ObjectId(purchase["id"])}
+
             purchasesDb.delete_one(myquery)
         else:
             return jsonify(result="Failure",status="400",message="Wrong content type!"),400 
@@ -236,6 +246,7 @@ def delete_density():
         if(request.headers['Content-Type']=="application/json"):
             density = request.get_json()
             myquery = {"_id": ObjectId(density["id"])}
+
             densitiesDb.delete_one(myquery)
         else:
             return jsonify(result="Failure",status="400",message="Wrong content type!"),400 
@@ -249,6 +260,7 @@ def delete_labor():
         if(request.headers['Content-Type']=="application/json"):
             labor = request.get_json()
             myquery = {"_id": ObjectId(labor["id"])}
+
             laborsDb.delete_one(myquery)
         else:
             return jsonify(result="Failure",status="400",message="Wrong content type!"),400 
@@ -266,6 +278,7 @@ def totalCostPurchase():
         if(request.headers['Content-Type']=="application/json"):
             purchase = request.get_json()
             myquery =  [{"$unwind":"$item"},{"$match":{"date":purchase["date"]}}, {"$group" : {"_id" : "$item", "sum" : {"$sum": "$total"}}}]
+
             return dumps(purchasesDb.aggregate(myquery))
         else:
             return jsonify(result="Failure",status="400",message="Wrong content type!"),400 

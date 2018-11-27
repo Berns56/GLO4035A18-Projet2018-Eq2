@@ -31,6 +31,7 @@ header li a {
 
 header li a:hover {
     background: #cc0000;
+    color:black !important; 
     text-decoration: underline ;
     cursor: pointer;
 }
@@ -111,6 +112,7 @@ a:hover {
     }
     
     function load(){
+        localStorage.clear()
 
         document.querySelector("#li_Home").addEventListener('click', function (event) {
             window.location.href = "/"
