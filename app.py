@@ -29,34 +29,14 @@ def import_transactions():
             dataJSON = [request.get_json()]
             for dataItem in dataJSON:
                 if utilities.schemaSoapValidation(dataItem, utilities.SCHEMA_SOAP_PURCHASE):
-                    strQte = dataItem["qte"]
-                    dataItem["qte"] = int(strQte)
-                    strTotal = dataItem["total"]
-                    dataItem["total"] = float(strTotal)
-                    strSTotal = dataItem["stotal"]
-                    dataItem["stotal"] = float(strSTotal)
-                    strTax = dataItem["tax"]
-                    dataItem["tax"] = float(strTax)
-                    strDate = dataItem["date"]
-                    dataItem["date"] = utilities.dateFormat(strDate)
-
-                    purchasesDb.insert_one(dataItem)
+                    purchase = utilities.purchaseFormat(dataItem)
+                    purchasesDb.insert_one(purchase)
                 elif utilities.schemaSoapValidation(dataItem, utilities.SCHEMA_SOAP_DENSITY): 
-                    strG = dataItem["g"]
-                    dataItem["g"] = float(strG)
-                    strML = dataItem["ml"]
-                    dataItem["ml"] = float(strML)
-
-                    densitiesDb.insert_one(dataItem)
+                    density = utilities.densityFormat(dataItem)
+                    densitiesDb.insert_one(density)
                 elif utilities.schemaSoapValidation(dataItem, utilities.SCHEMA_SOAP_LABOR): 
-                    strQte = dataItem["qte"]
-                    dataItem["qte"] = int(strQte)
-                    strJobId = dataItem["job_id"]
-                    dataItem["job_id"] = int(strJobId)
-                    strDate = dataItem["date"]
-                    dataItem["date"] = utilities.dateFormat(strDate)
-                    
-                    laborsDb.insert_one(dataItem)
+                    labor = utilities.laborFormat(dataItem)
+                    laborsDb.insert_one(labor)
                 else:
                     return jsonify(result = "Failure", status = "400", message = "Wrong transaction format!"), 400 
             return jsonify(result = "Success", status = "200", message = "Data imported!"), 200
@@ -69,7 +49,7 @@ def import_transactions():
 def delete_transactions():
     if (request.headers['Content-Type'] == "application/json"):
         encryptedPassword = hashlib.md5(request.get_json()["password"].encode("utf-8")).hexdigest()
-        if (encryptedPassword == '0192023a7bbd73250516f069df18b500'):
+        if (encryptedPassword == utilities.ENCRYPTED_PASSWORD):
             transactDb.drop()
             purchasesDb.drop()
             densitiesDb.drop()
@@ -77,7 +57,6 @@ def delete_transactions():
             return jsonify(result = "Success", status = "200", message = "Database emptied!"), 200
         else:
             return jsonify(result = "Failure", status = "401", message = "Wrong password!"), 401
-
 
 @application.route("/transactions/purchases", methods=["GET"])
 def display_purchases():
@@ -95,62 +74,44 @@ def display_labors():
 def display_addTransactionsHtml():
     return send_from_directory('/templates', 'addTransactions.html')
 
-@application.route("/transactions/add/purchase",methods=["POST"])
+@application.route("/transactions/add/purchase", methods=["POST"])
 def add_Purchase():
-    if(request.headers['Content-Type']=="application/json"):
+    if(request.headers['Content-Type'] == "application/json"):
         purchase = request.get_json()
         if(utilities.schemaSoapValidation(purchase,utilities.SCHEMA_SOAP_PURCHASE)):
-            strQte = purchase["qte"]
-            purchase["qte"] = int(strQte)
-            strTotal = purchase["total"]
-            purchase["total"] = float(strTotal)
-            strSTotal = purchase["stotal"]
-            purchase["stotal"] = float(strSTotal)
-            strTax = purchase["tax"]
-            purchase["tax"] = float(strTax)
-
+            purchase = utilities.purchaseFormat(purchase)
             purchasesDb.insert_one(purchase)
         else:
-            return jsonify(result="Failure",status="400",message="Purchase has the wrong content type!"),400
+            return jsonify(result = "Failure", status = "400", message = "Purchase has the wrong content type!"), 400
     else:
-        return jsonify(result="Failure",status="400",message="Wrong content type!"),400    
-    return jsonify(result="Success", status="200", message="Purchase add"),200
+        return jsonify(result = "Failure", status = "400", message = "Wrong content type!"), 400    
+    return jsonify(result = "Success", status = "200", message = "Purchase add"), 200
 
-
-@application.route("/transactions/add/density",methods=["POST"])
+@application.route("/transactions/add/density", methods=["POST"])
 def add_Density():
-    if(request.headers['Content-Type']=="application/json"):
+    if(request.headers['Content-Type'] == "application/json"):
         density = request.get_json()
-        if(utilities.schemaSoapValidation(density,utilities.SCHEMA_SOAP_DENSITY)):
-            strG = density["g"]
-            density["g"] = float(strG)
-            strML = density["ml"]
-            density["ml"] = float(strML)
-
+        if(utilities.schemaSoapValidation(density, utilities.SCHEMA_SOAP_DENSITY)):
+            density = utilities.densityFormat(density)
             densitiesDb.insert_one(density)
         else:
-            return jsonify(result="Failure",status="400",message="Density has the wrong content type!"),400
+            return jsonify(result = "Failure", status = "400", message = "Density has the wrong content type!"), 400
     else:
-        return jsonify(result="Failure",status="400",message="Wrong content type!"),400    
-    return jsonify(result="Success", status="200", message="Density add"),200
+        return jsonify(result = "Failure", status = "400", message = "Wrong content type!"), 400    
+    return jsonify(result = "Success", status = "200", message = "Density add"),200
 
-
-@application.route("/transactions/add/labor",methods=["POST"])
+@application.route("/transactions/add/labor", methods=["POST"])
 def add_Labor():
-    if(request.headers['Content-Type']=="application/json"):
+    if(request.headers['Content-Type'] == "application/json"):
         labor = request.get_json()
         if(utilities.schemaSoapValidation(labor,utilities.SCHEMA_SOAP_LABOR)):
-            strQte = labor["qte"]
-            labor["qte"] = int(strQte)
-            strJobId = labor["job_id"]
-            labor["job_id"] = int(strJobId)
-
+            labor = utilities.laborFormat(labor)
             laborsDb.insert_one(labor)
         else:
-            return jsonify(result="Failure",status="400",message="Labor has the wrong content type!"),400
+            return jsonify(result = "Failure", status = "400", message = "Labor has the wrong content type!"), 400
     else:
-        return jsonify(result="Failure",status="400",message="Wrong content type!"),400    
-    return jsonify(result="Success", status="200", message="Labor add"), 200
+        return jsonify(result = "Failure", status = "400", message = "Wrong content type!"), 400    
+    return jsonify(result = "Success", status = "200", message = "Labor add"), 200
 
 @application.route("/transactions/modifyPurchase", methods=["GET"])
 def display_modifyPurchaseHtml():

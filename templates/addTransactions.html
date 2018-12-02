@@ -356,8 +356,8 @@ label, input, select {
         let unit = document.querySelector("#selectLaborsUnit").value
         let qte = document.querySelector("#tbLaborsQte").value 
         let date = document.querySelector("#tbLaborsDate").value
-        let type = document.querySelector("#tbLaborsDate").value
-        let jobId = document.querySelector("#tbLaborsDate").value
+        let type = document.querySelector("#selectLaborsType").value
+        let jobId = document.querySelector("#tbLaborsJobId").value
         let item = getItem("labor")
 
         if(unit && qte && date && type && jobId && item && parseInt(jobId) > 1 && parseInt(qte) > 1){
@@ -366,7 +366,7 @@ label, input, select {
                             "qte": qte, 
                             "unit": unit, 
                             "type": type, 
-                            "jobId": jobId})
+                            "job_id": jobId})
         
             postAjax('/transactions/add/labor', queryData , function(data) {
                 if(data.result == "Failure" || !(data.result)){
@@ -581,7 +581,7 @@ label, input, select {
             <option value = "Avocado Oil">Avocado Oil</option>
         </select>
         <br>
-        <label for="tbPLaborsJobId">Job Id: </label><input type="text" id="tbLaborsJobId"><br>
+        <label for="tbLaborsJobId">Job Id: </label><input type="text" id="tbLaborsJobId"><br>
         <label for="tbLaborsUnit">Unit: </label>
         <select id="selectLaborsUnit">
             <option value="ml">ml</option>

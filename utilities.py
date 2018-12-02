@@ -1,5 +1,7 @@
 from jsonschema import validate, ValidationError
 
+ENCRYPTED_PASSWORD = "0192023a7bbd73250516f069df18b500"
+
 def schemaSoapValidation(p_item, p_schema):
     try:
         validate(p_item, p_schema)
@@ -103,9 +105,37 @@ def convertStrMonthToStrMonthNumber(p_monthToConvert):
         "DECEMBER" : "12"
 	}.get(p_monthToConvert)
 
-def convertStrDaytoStrDayNumber(p_dayToConvert):
+def convertStrDayToStrDayNumber(p_dayToConvert):
     if len(p_dayToConvert) > 1:
         return p_dayToConvert
     else:
-        return ("0" + p_dayToConvert)
+        return "0" + p_dayToConvert
         
+def purchaseFormat(p_purchaseToFormat):
+    strQte = p_purchaseToFormat["qte"]
+    p_purchaseToFormat["qte"] = int(strQte)
+    strTotal = p_purchaseToFormat["total"]
+    p_purchaseToFormat["total"] = float(strTotal)
+    strSTotal = p_purchaseToFormat["stotal"]
+    p_purchaseToFormat["stotal"] = float(strSTotal)
+    strTax = p_purchaseToFormat["tax"]
+    p_purchaseToFormat["tax"] = float(strTax)
+    strDate = p_purchaseToFormat["date"]
+    p_purchaseToFormat["date"] = dateFormat(strDate)
+    return p_purchaseToFormat
+
+def densityFormat(p_densityToFormat):
+    strG = p_densityToFormat["g"]
+    p_densityToFormat["g"] = float(strG)
+    strML = p_densityToFormat["ml"]
+    p_densityToFormat["ml"] = float(strML)
+    return p_densityToFormat
+
+def laborFormat(p_laborToFormat):
+    strQte = p_laborToFormat["qte"]
+    p_laborToFormat["qte"] = int(strQte)
+    strJobId = p_laborToFormat["job_id"]
+    p_laborToFormat["job_id"] = int(strJobId)
+    strDate = p_laborToFormat["date"]
+    p_laborToFormat["date"] = dateFormat(strDate)
+    return p_laborToFormat
