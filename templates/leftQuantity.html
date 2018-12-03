@@ -213,6 +213,13 @@ td{
             html.push("<td class=\"title\">Quantity left (g)</td>")
             html.push("</tr>") 
 
+            
+            purchaseQuantity.sort(function(a,b){
+                if(a.item < b.item) { return -1; }
+                if(a.item > b.item) { return 1; }
+                return 0;
+            });
+
             purchaseQuantity.forEach(purchaseQte =>{
                 let index = laborsQuantity.findIndex(laborsQte => laborsQte.item == purchaseQte.item)
                 if(index != -1)
@@ -225,8 +232,8 @@ td{
 
                 html.push("<tr>")
                 html.push("<td class=\"center\">"+purchaseQte.item+"</td>")
-                html.push("<td class=\"center\">"+purchaseQte.qte.toFixed(0)+"</td>")
-                html.push("<td class=\"center\">"+(purchaseQte.qte * factor).toFixed(0)+"</td>")
+                html.push("<td class=\"center\">"+parseInt(purchaseQte.qte)+"</td>")
+                html.push("<td class=\"center\">"+ parseInt(purchaseQte.qte * factor)+"</td>")
                 html.push("</tr>")
             })
 
