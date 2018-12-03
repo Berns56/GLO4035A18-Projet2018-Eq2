@@ -101,11 +101,6 @@ td{
     }
 
     function load(){
-
-        ajax_get('/transactions/densities', function(data) {
-            densities = JSON.parse(JSON.stringify(data))
-        })
-
         document.querySelector("#li_Home").addEventListener('click', function (event) {
             window.location.href = "/"
         });
@@ -139,41 +134,19 @@ td{
                 let index = densities.findIndex(density => density.item == comsumable)
                 return densities[index].g/densities[index].ml
             }
-            
         }
 
-        async function getLeftQuantity(date){
-            await Promise.all([getQuantityPurchase(date), getQuantityLabor(date)]);
-            let html = []
-
-            html.push("<table id=\"tableTotalCost\">")
-            html.push("<tr><td class=\"tableTitle\" colspan='3'>"+date+"</td></tr>")
-            html.push("<tr>")  
-            html.push("<td class=\"title\">Comsumable</td>")
-            html.push("<td class=\"title\">Quantity left (ml)</td>")
-            html.push("<td class=\"title\">Quantity left (g)</td>")
-            html.push("</tr>") 
-
-            purchaseQuantity.forEach(purchaseQte =>{
-                if(laborsQuantity.find(obj => obj.item == purchaseQte.item)){
-                    purchaseQte.qte -= laborsQuantity
+        function calculateSumLabors(labors){
+            labors.forEach(labor=>{
+                if(!(laborsQuantity.find(obj => obj.item == labor.item))){
+                    laborsQuantity.push(labor)
+                } else {
+                    let index = laborsQuantity.findIndex(obj => obj.item == labor.item)
+                    laborsQuantity[index].qte += labor.qte
                 }
-
-                let factor = getFactorGtoMl(purchaseQte.item)
-
-                html.push("<tr>")
-                html.push("<td class=\"center\">"+purchaseQte.item+"</td>")
-                html.push("<td class=\"center\">"+purchaseQte.qte+"</td>")
-                html.push("<td class=\"center\">"+(purchaseQte.qte * factor)+"</td>")
-                html.push("</tr>")
             })
-
-            html.push("</table>")
-            document.querySelector("#leftQuantity").innerHTML = ""
-            document.querySelector("#leftQuantity").insertAdjacentHTML("beforeend", html.join("\n"))   
-         
         }
-
+        
         function calculateSumPurchase(purchases){
             purchases.forEach(purchase=>{
                 if(!(purchaseQuantity.find(obj => obj.item == purchase.item))){
@@ -185,25 +158,9 @@ td{
             })
         }
 
-        function calculateSumLabors(labors){
-            labors.forEach(labor=>{
-                if(!(purchaseQuantity.find(obj => obj.item == labor.item))){
-                    laborsQuantity.push(labor)
-                } else {
-                    let index = laborsQuantity.findIndex(obj => obj.item == labor.item)
-                    laborsQuantity[index].qte += labor.qte
-                }
-            })
-        }
-        
-        function removeDuplicates(myArr, prop) {
-            return myArr.filter((obj, pos, arr) => {
-                return arr.map(mapObj => mapObj[prop]).indexOf(obj[prop]) === pos;
-            });
-        }
-
         function getQuantityPurchase(date){
             return new Promise(function (resolve, reject) {
+                purchaseQuantity = []
                 let queryData = JSON.stringify({"date":date})
                 postAjax('/leftQuantity/purchase', queryData , function(data) {
                     data.forEach(elem =>{
@@ -221,7 +178,7 @@ td{
 
         function getQuantityLabor(date){
             return new Promise(function (resolve, reject) {
-
+                laborsQuantity = []
                 let queryData = JSON.stringify({"date":date})
                 postAjax('/leftQuantity', queryData , function(data) {
                     data.forEach(elem =>{
@@ -236,6 +193,56 @@ td{
                 })
             })
         }
+
+        function getDensities(){
+            densities = []
+            ajax_get('/transactions/densities', function(data) {
+                densities = JSON.parse(JSON.stringify(data))
+            })
+        }
+
+        async function getLeftQuantity(date){
+            await Promise.all([getDensities(),getQuantityPurchase(date), getQuantityLabor(date)]);
+            let html = []
+
+            html.push("<table id=\"tableTotalCost\">")
+            html.push("<tr><td class=\"tableTitle\" colspan='3'>"+date+"</td></tr>")
+            html.push("<tr>")  
+            html.push("<td class=\"title\">Comsumable</td>")
+            html.push("<td class=\"title\">Quantity left (ml)</td>")
+            html.push("<td class=\"title\">Quantity left (g)</td>")
+            html.push("</tr>") 
+
+            purchaseQuantity.forEach(purchaseQte =>{
+                let index = laborsQuantity.findIndex(laborsQte => laborsQte.item == purchaseQte.item)
+                if(index != -1)
+                    purchaseQte.qte -= laborsQuantity[index].qte
+        
+                if(purchaseQte.qte < 0)
+                    purchaseQte.qte = 0
+
+                let factor = getFactorGtoMl(purchaseQte.item)
+
+                html.push("<tr>")
+                html.push("<td class=\"center\">"+purchaseQte.item+"</td>")
+                html.push("<td class=\"center\">"+purchaseQte.qte.toFixed(0)+"</td>")
+                html.push("<td class=\"center\">"+(purchaseQte.qte * factor).toFixed(0)+"</td>")
+                html.push("</tr>")
+            })
+
+            html.push("</table>")
+            document.querySelector("#leftQuantity").innerHTML = ""
+            document.querySelector("#leftQuantity").insertAdjacentHTML("beforeend", html.join("\n"))   
+         
+        }
+        
+        function removeDuplicates(myArr, prop) {
+            return myArr.filter((obj, pos, arr) => {
+                return arr.map(mapObj => mapObj[prop]).indexOf(obj[prop]) === pos;
+            });
+        }
+
+        
 
     }
 </script>

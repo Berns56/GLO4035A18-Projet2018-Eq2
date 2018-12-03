@@ -241,13 +241,13 @@ def display_quantityLeftHtml():
 @application.route("/leftQuantity", methods=["POST"])
 def quantityLeft():
     reqData = request.get_json()
-    quantityLeftToAggregate = {"$and": [{"date":reqData["date"]}, {"type" : "usage"}]}
+    quantityLeftToAggregate = {"$and": [{"date": {"$lte":reqData["date"]}}, {"type" : "usage"}]}
     return dumps(laborsDb.find(quantityLeftToAggregate))
 
 @application.route("/leftQuantity/purchase", methods=["POST"])
 def getSumMlAndSumGFromPurchase():
     reqData = request.get_json()
-    myquery =  {"date":reqData["date"]}
+    myquery =  {"date":  {"$lte": reqData["date"]}}
     return dumps(purchasesDb.find(myquery)) 
 
 if __name__ ==  "__main__":

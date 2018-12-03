@@ -167,8 +167,11 @@ a:hover {
     } 
 
     function getPurchases(){
-        let listId = []
+        let purchases = []
+
         ajax_get('/transactions/purchases', function(data) {
+            purchases = JSON.parse(JSON.stringify(data))
+
             let resultContainer = document.querySelector("#divAchat")
             let html = []
             html.push("<table id=\"tablePurchase\">")
@@ -186,7 +189,13 @@ a:hover {
             html.push("<td class=\"title\">Remove</td>")
             html.push("<tr>")
 
-            data.forEach(element => {
+            let listId = []
+
+            purchases.sort(function(a,b){
+                return new Date(b.date) - new Date(a.date);
+            });
+
+            purchases.forEach(element => {
                 html.push("<tr id=\"purchase"+element._id.$oid+"\">")   
                 html.push("<td id=\"purchaseId"+element._id.$oid+"\">"+element._id.$oid+"</td>")
                 html.push("<td id=\"purchaseItem"+element._id.$oid+"\">"+element.item+"</td>")
@@ -215,6 +224,7 @@ a:hover {
                     deletePurchase(id)
                 });
             })
+            
         });
     }
 
@@ -254,9 +264,12 @@ a:hover {
 
     function getDensities(){
         let listId = []
+        let densities = []
         ajax_get('/transactions/densities', function(data) {
             let resultContainer = document.querySelector("#divDensity")
             let html = []
+            
+            densities = JSON.parse(JSON.stringify(data))
             html.push("<table id=\"tableDenstiy\">")
             html.push("<tr><td class=\"tableTitle\" colspan='7'>Density</td></tr>")
             html.push("<tr>")  
@@ -268,7 +281,13 @@ a:hover {
             html.push("<td class=\"title\">Remove</td>")
             html.push("</tr>")
 
-            data.forEach(element => {
+            densities.sort(function(a,b){
+                if(a.item < b.item) { return -1; }
+                if(a.item > b.item) { return 1; }
+                return 0;
+            });
+
+            densities.forEach(element => {
                 html.push("<tr id=\"density"+element._id.$oid+"\">")   
                 html.push("<td id=\"densityId"+element._id.$oid+"\">"+element._id.$oid+"</td>")
                 html.push("<td id=\"densityItem"+element._id.$oid+"\">"+element.item+"</td>")
@@ -324,9 +343,13 @@ a:hover {
 
     function getLabors(){
         let listId = []
+        let labors = []
+
         ajax_get('/transactions/labors', function(data) {
             let resultContainer = document.querySelector("#divTranformation")
             let html = []
+
+            labors = JSON.parse(JSON.stringify(data))
             html.push("<table id=\"tableDensity\">")
             html.push("<tr><td class=\"tableTitle\"  colspan='9'>Labors</td></tr>")
             html.push("<tr>")  
@@ -341,7 +364,11 @@ a:hover {
             html.push("<td class=\"title\">Remove</td>")
             html.push("</tr>")
 
-            data.forEach(element => {
+            labors.sort(function(a,b){
+                return new Date(b.date) - new Date(a.date);
+            });
+
+            labors.forEach(element => {
                 html.push("<tr id=\"labors"+element._id.$oid+"\">")   
                 html.push("<td id=\"laborsId"+element._id.$oid+"\">"+element._id.$oid+"</td>")
                 html.push("<td class=\"center\" id=\"laborsJobId"+element._id.$oid+"\">"+element.job_id+"</td>")
