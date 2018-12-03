@@ -127,6 +127,8 @@ def purchaseFormat(p_purchaseToFormat):
     p_purchaseToFormat["tax"] = float(strTax)
     strDate = p_purchaseToFormat["date"]
     p_purchaseToFormat["date"] = dateFormat(strDate)
+    strUnit = convertUnit(p_purchaseToFormat["unit"])
+    p_purchaseToFormat["unit"] = strUnit
     return p_purchaseToFormat
 
 def densityFormat(p_densityToFormat):
@@ -143,4 +145,12 @@ def laborFormat(p_laborToFormat):
     p_laborToFormat["job_id"] = int(strJobId)
     strDate = p_laborToFormat["date"]
     p_laborToFormat["date"] = dateFormat(strDate)
+    strUnit = convertUnit(p_laborToFormat["unit"])
+    p_laborToFormat["unit"] = strUnit
     return p_laborToFormat
+
+def convertUnit(p_Unit):
+    if p_Unit == "g" or  p_Unit == "ml":
+        return p_Unit
+    else:
+        return "ml"
