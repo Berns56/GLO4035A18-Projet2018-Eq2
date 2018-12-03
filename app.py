@@ -120,25 +120,17 @@ def display_modifyPurchaseHtml():
 @application.route("/transactions/modify/purchase", methods=["PUT"])
 def modify_Purchase():
     try:
-        if(request.headers['Content-Type']=="application/json"):
+        if(request.headers['Content-Type'] == "application/json"):
             purchase = request.get_json()
-            strQte = purchase["qte"]
-            purchase["qte"] = int(strQte)
-            strTotal = purchase["total"]
-            purchase["total"] = float(strTotal)
-            strSTotal = purchase["stotal"]
-            purchase["stotal"] = float(strSTotal)
-            strTax = purchase["tax"]
-            purchase["tax"] = float(strTax)
-            myquery = {"_id": ObjectId(purchase["id"])}
-            newvalues = { "$set": {"date": purchase["date"], "item":purchase["item"], "unit": purchase["unit"],"qte": purchase["qte"], "total" : purchase["total"], "stotal" : purchase["stotal"], "tax" : purchase["tax"]}}
-
-            purchasesDb.update_one(myquery,newvalues)
+            purchase = utilities.purchaseFormat(purchase)
+            purchaseToEdit = {"_id": ObjectId(purchase["id"])}
+            newValues = { "$set": {"date": purchase["date"], "item":purchase["item"], "unit": purchase["unit"],"qte": purchase["qte"], "total" : purchase["total"], "stotal" : purchase["stotal"], "tax" : purchase["tax"]}}
+            purchasesDb.update_one(purchaseToEdit, newValues)
         else:
-            return jsonify(result="Failure",status="400",message="Wrong content type!"),400 
+            return jsonify(result = "Failure", status = "400", message = "Wrong content type!"), 400 
     except Exception as e:
             return str(e)
-    return jsonify(result="Success", status="200", message="Purchase modified"), 200
+    return jsonify(result = "Success", status = "200", message = "Purchase modified"), 200
 
 @application.route("/transactions/modifyDensity", methods=["GET"])
 def display_modifyDensityHtml():
@@ -147,21 +139,17 @@ def display_modifyDensityHtml():
 @application.route("/transactions/modify/density", methods=["PUT"])
 def modify_Density():
     try:
-        if(request.headers['Content-Type']=="application/json"):
+        if(request.headers['Content-Type'] == "application/json"):
             density = request.get_json()
-            strG = density["g"]
-            density["g"] = float(strG)
-            strML = density["ml"]
-            density["ml"] = float(strML)
-            myquery = {"_id": ObjectId(density["id"])}
-            newvalues = { "$set": {"item":density["item"], "g" : density["g"], "ml" : density["ml"]}}
-
-            densitiesDb.update_one(myquery,newvalues)
+            density = utilities.densityFormat(density)
+            densityToEdit = {"_id": ObjectId(density["id"])}
+            newValues = { "$set": {"item":density["item"], "g" : density["g"], "ml" : density["ml"]}}
+            densitiesDb.update_one(densityToEdit, newValues)
         else:
-            return jsonify(result="Failure",status="400",message="Wrong content type!"),400 
+            return jsonify(result = "Failure", status = "400", message = "Wrong content type!"), 400 
     except Exception as e:
             return str(e)
-    return jsonify(result="Success", status="200", message="Density modified"), 200
+    return jsonify(result = "Success", status = "200", message = "Density modified"), 200
 
 @application.route("/transactions/modifyLabors", methods=["GET"])
 def display_modifyLaborsHtml():
@@ -172,62 +160,54 @@ def modify_Labor():
     try:
         if(request.headers['Content-Type']=="application/json"):
             labor = request.get_json()
-            strQte = labor["qte"]
-            labor["qte"] = int(strQte)
-            strJobId = labor["job_id"]
-            labor["job_id"] = int(strJobId)
-            myquery = {"_id": ObjectId(labor["id"])}
-            newvalues = { "$set": {"date": labor["date"], "item":labor["item"], "qte": labor["qte"], "jobId" : labor["job_id"], "unit" : labor["unit"], "type" : labor["type"]}}
-
-            laborsDb.update_one(myquery,newvalues)
+            labor = utilities.laborFormat(labor)
+            laborToEdit = {"_id": ObjectId(labor["id"])}
+            newValues = { "$set": {"date": labor["date"], "item":labor["item"], "qte": labor["qte"], "job_id" : labor["job_id"], "unit" : labor["unit"], "type" : labor["type"]}}
+            laborsDb.update_one(laborToEdit,newValues)
         else:
-            return jsonify(result="Failure",status="400",message="Wrong content type!"),400 
+            return jsonify(result = "Failure", status = "400", message = "Wrong content type!"), 400 
     except Exception as e:
             return str(e)
-    return jsonify(result="Success", status="200", message="labor modified"), 200
+    return jsonify(result = "Success", status = "200", message = "labor modified"), 200
 
 @application.route("/transactions/delete/purchase", methods=["DELETE"])
 def delete_purchase():
     try:
-        if(request.headers['Content-Type']=="application/json"):
+        if(request.headers['Content-Type'] == "application/json"):
             purchase = request.get_json()
-            myquery = {"_id": ObjectId(purchase["id"])}
-
-            purchasesDb.delete_one(myquery)
+            purchaseToDelete = {"_id": ObjectId(purchase["id"])}
+            purchasesDb.delete_one(purchaseToDelete)
         else:
-            return jsonify(result="Failure",status="400",message="Wrong content type!"),400 
+            return jsonify(result = "Failure", status = "400", message = "Wrong content type!"), 400 
     except Exception as e:
             return str(e)
-    return jsonify(result="Success", status="200", message="purchase deleted"), 200
-
+    return jsonify(result = "Success", status = "200", message = "purchase deleted"), 200
 
 @application.route("/transactions/delete/density", methods=["DELETE"])
 def delete_density():
     try:
-        if(request.headers['Content-Type']=="application/json"):
+        if(request.headers['Content-Type'] == "application/json"):
             density = request.get_json()
-            myquery = {"_id": ObjectId(density["id"])}
-
-            densitiesDb.delete_one(myquery)
+            densityToDelete = {"_id": ObjectId(density["id"])}
+            densitiesDb.delete_one(densityToDelete)
         else:
-            return jsonify(result="Failure",status="400",message="Wrong content type!"),400 
+            return jsonify(result = "Failure", status = "400", message = "Wrong content type!"), 400 
     except Exception as e:
             return str(e)
-    return jsonify(result="Success", status="200", message="density deleted"), 200
+    return jsonify(result = "Success", status = "200", message = "density deleted"), 200
 
 @application.route("/transactions/delete/labors", methods=["DELETE"])
 def delete_labor():
     try:
-        if(request.headers['Content-Type']=="application/json"):
+        if(request.headers['Content-Type'] == "application/json"):
             labor = request.get_json()
-            myquery = {"_id": ObjectId(labor["id"])}
-
-            laborsDb.delete_one(myquery)
+            laborToDelete = {"_id": ObjectId(labor["id"])}
+            laborsDb.delete_one(laborToDelete)
         else:
-            return jsonify(result="Failure",status="400",message="Wrong content type!"),400 
+            return jsonify(result = "Failure", status = "400", message = "Wrong content type!"), 400 
     except Exception as e:
             return str(e)
-    return jsonify(result="Success", status="200", message="labor deleted"), 200
+    return jsonify(result = "Success", status = "200", message = "labor deleted"), 200
 
 @application.route("/totalCost", methods=["GET"])
 def display_totalCostHtml():
@@ -236,24 +216,23 @@ def display_totalCostHtml():
 @application.route("/totalCost", methods=["POST"])
 def totalCostPurchase():
     try:
-        if(request.headers['Content-Type']=="application/json"):
+        if(request.headers['Content-Type'] == "application/json"):
             purchase = request.get_json()
-            myquery =  [{"$unwind":"$item"},{"$match":{"date":purchase["date"]}}, {"$group" : {"_id" : "$item", "sum" : {"$sum": "$total"}}}]
-
-            return dumps(purchasesDb.aggregate(myquery))
+            purchaseToAggregate =  [{"$unwind":"$item"},{"$match":{"date":purchase["date"]}}, {"$group" : {"_id" : "$item", "sum" : {"$sum": "$total"}}}]
+            return dumps(purchasesDb.aggregate(purchaseToAggregate))
         else:
-            return jsonify(result="Failure",status="400",message="Wrong content type!"),400 
+            return jsonify(result = "Failure", status = "400",message = "Wrong content type!"), 400 
     except Exception as e:
             return str(e)
-    return jsonify(result="Success", status="200", message="labor deleted"), 200
+    return jsonify(result = "Success", status = "200", message = "Total cost calculated!"), 200
 
 @application.route("/averageCost", methods=["GET"])
 def display_averageCostHtml():
-    return send_from_directory('/templates', 'totalCost.html')
+    return send_from_directory('/templates', 'averageCost.html')
 
 @application.route("/averageCost", methods=["POST"])
 def averageCostPurchase():
-    return jsonify(result="Success", status="200", message="labor deleted"), 200
+    return jsonify(result="Success", status="200", message="Average cost calculated!"), 200
 
 @application.route("/leftQuantity", methods=["GET"])
 def display_quantityLeftHtml():
@@ -262,8 +241,8 @@ def display_quantityLeftHtml():
 @application.route("/leftQuantity", methods=["POST"])
 def quantityLeft():
     reqData = request.get_json()
-    myquery = {"$and": [{"date":reqData["date"]}, {"type" : "usage"}]}
-    return dumps(laborsDb.find(myquery))
+    quantityLeftToAggregate = {"$and": [{"date":reqData["date"]}, {"type" : "usage"}]}
+    return dumps(laborsDb.find(quantityLeftToAggregate))
 
 @application.route("/leftQuantity/purchase", methods=["POST"])
 def getSumMlAndSumGFromPurchase():

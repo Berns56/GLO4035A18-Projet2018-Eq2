@@ -162,37 +162,37 @@ td{
                                 html.push("<tr>")
 
                             html.push("<td class=\"center\">"+elem._id+"</td>")
-                            html.push("<td class=\"center\">"+elem.sum+" $</td>")
+                            html.push("<td class=\"center\">"+ parseFloat(elem.sum).toFixed(2) +" $</td>")
                             html.push("</tr>")
                             
                             calculConsumableTotal(elem)
-                            consumableTotalCost += elem.sum
+                            consumableTotalCost += parseFloat(elem.sum).toFixed(2)
                         })
                         
                         if(costHE > 0){
                             html.push("<tr>")
                             html.push("<td class=\"center\">Consumable - HE</td>")
-                            html.push("<td class=\"center\">"+costHE+" $</td>")
+                            html.push("<td class=\"center\">"+ parseFloat(costHE).toFixed(2) +" $</td>")
                             html.push("</tr>")
                         }
 
                         if(costBaseOil > 0){
                             html.push("<tr>")
                             html.push("<td class=\"center\">Consumable - Base Oil</td>")
-                            html.push("<td class=\"center\">"+costBaseOil+" $</td>")
+                            html.push("<td class=\"center\">"+ parseFloat(costBaseOil).toFixed(2) +" $</td>")
                             html.push("</tr>")
                         }
 
                         if(costSoap > 0){
                             html.push("<tr>")
                             html.push("<td class=\"center\">Consumable - Soap</td>")
-                            html.push("<td class=\"center\">"+costSoap+" $</td>")
+                            html.push("<td class=\"center\">"+ parseFloat(costSoap).toFixed(2) +" $</td>")
                             html.push("</tr>")
                         }
 
                         html.push("<tr class=\"total\">")
                         html.push("<td class=\"center\">Consumable</td>")
-                        html.push("<td class=\"center\">"+consumableTotalCost+" $</td>")
+                        html.push("<td class=\"center\">"+ parseFloat(consumableTotalCost).toFixed(2) +" $</td>")
                         html.push("</tr>")
                         html.push("</table>")
                         document.querySelector("#totalCost").innerHTML = ""

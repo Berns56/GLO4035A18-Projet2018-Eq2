@@ -1,166 +1,209 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>Average cost</title>
-</head>
+    <head>
+        <meta charset="UTF-8">
+        <title>Average cost</title>
+    </head>
 
-<style>
-    /*---------Base-------*/
-    header{
-    display: flex;
-    width: 100%;
-}
+    <style>
+        /*---------Base-------*/
+        header{
+        display: flex;
+        width: 100%;
+    }
 
-header ul {
-    width: 100%;
-}
+    header ul {
+        width: 100%;
+    }
 
-header li {
-    display: inline;
-}
+    header li {
+        display: inline;
+    }
 
-header li a {
-    width: 100%;
-    background-color: #ccffff;
-    padding: 1% 5%;
-    border: 1px solid black;
-    color:black;
-    size: 15px;
-}
+    header li a {
+        width: 100%;
+        background-color: #ccffff;
+        padding: 1% 5%;
+        border: 1px solid black;
+        color:black;
+        size: 15px;
+    }
 
-header li a:hover {
-    background: #cc0000;
-    text-decoration: underline ;
-    cursor: pointer;
-}
+    header li a:hover {
+        background: #cc0000;
+        text-decoration: underline ;
+        cursor: pointer;
+    }
 
 
-button {
-    margin-bottom: 10px;
-}
+    button {
+        margin-bottom: 10px;
+    }
 
-label, input, select {
-    margin-bottom: 15px;
-}
-</style>
+    label, input, select {
+        margin-bottom: 15px;
+    }
+    </style>
 
-<script>
+    <script>
+        let purchases = []
+        let densities = []
+        let labors = []
 
-    function ajax_get(url, data, callback) {
-        let xhr = new XMLHttpRequest();
-        xhr.onreadystatechange = function () {
-            if (xhr.readyState === 4 && xhr.status === 200) {
-                try {
-                    callback(JSON.parse(xhr.responseText))
-                } catch(err) {
-                    console.log(err.message + " in " + xhr.responseText);
-                    return;
+        function ajax_get(url, callback) {
+            let xmlhttp = new XMLHttpRequest();
+            xmlhttp.onreadystatechange = function() {
+                if (xmlhttp.readyState == 4 && xmlhttp.status == 200) {
+                    try {
+                        var data = JSON.parse(xmlhttp.responseText);
+                    } catch(err) {
+                        console.log(err.message + " in " + xmlhttp.responseText);
+                        return;
+                    }
+                    callback(data);
+                }
+            };
+    
+            xmlhttp.open("GET", url, true);
+            xmlhttp.send();
+        }
+
+        function postAjax(url, data, callback) {
+            let xhr = new XMLHttpRequest();
+            xhr.onreadystatechange = function () {
+                if (xhr.readyState === 4 && xhr.status === 200) {
+                    try {
+                        callback(JSON.parse(xhr.responseText))
+                    } catch(err) {
+                        console.log(err.message + " in " + xhr.responseText);
+                        return;
+                    }
+                }
+            };
+            xhr.open("POST", url, true);
+            xhr.setRequestHeader("Content-Type", "application/json");
+            xhr.send(data);
+        }
+
+        function load(){
+
+            ajax_get('/transactions/purchases', function(data) {
+                purchases = JSON.parse(data)
+            })
+
+            ajax_get('/transactions/densities', function(data) {
+                densities = JSON.parse(JSON.stringify(data))
+            })
+
+            ajax_get('/transactions/labors', function(data) {
+                labors = JSON.parse(JSON.stringify(data))
+            })
+
+            document.querySelector("#li_Home").addEventListener('click', function (event) {
+                window.location.href = "/"
+            });
+
+            document.querySelector("#li_Inventory").addEventListener('click', function (event) {
+                window.location.href = "/transactions"
+            });
+
+            document.querySelector("#li_TotalCost").addEventListener('click', function (event) {
+                window.location.href = "/totalCost"
+            });
+
+            document.querySelector("#li_AvgCost").addEventListener('click', function (event) {
+                window.location.href = "/averageCost"
+            });
+
+            document.querySelector("#li_quantity").addEventListener('click', function (event) {
+                window.location.href = "/leftQuantity"
+            });
+
+            document.querySelector("#btnGetAverage").addEventListener('click', function (event) {
+                getAverage()
+            });
+
+            function getAverage(){
+                let date = document.querySelector("#tbPurchaseDate").value
+                let unit = document.querySelector("#selectPurchaseUnit").value
+                let type = document.querySelector("#selectPurchaseConsumable").value
+
+                json = JSON.stringify({"date":date, "unit": unit, "type": type})
+
+                if(!date)
+                {
+                    alert("Error: Please insert a date")
+                }
+                else
+                {
+                    document.querySelector("#averageCost").innerHTML = "Loading..."
+
+                    alert(purchases.length)
+                    let purchasesArray = []
+                    purchasesArray = purchases.find(p => p.date <= date)
+                    alert("t2")
+                    alert(purchasesArray)
+
+                    ajax_get("/averageCost", json, function(data){
+                        if(data === undefined || data.length == 0){
+                            alert("TEST")
+                            document.querySelector("#totalCost").innerHTML = "Sorry, there's no average cost for this date!"
+                        } else if(data.result == "Failure"){
+                            alert("Error: can't delete this item")
+                        } else{
+                            document.querySelector("#averageCost").innerHTML = "average cost of " + type + " on " + date + " : " + data.avgCost + " $/"+unit
+                        }
+                    })
                 }
             }
-        };
-
-        xhr.open("POST", url, true);
-        xhr.setRequestHeader("Content-Type", "application/json");
-        xhr.send(data);
-    }
-
-    function load(){
-
-        document.querySelector("#li_Home").addEventListener('click', function (event) {
-            window.location.href = "/"
-        });
-
-        document.querySelector("#li_Inventory").addEventListener('click', function (event) {
-            window.location.href = "/transactions"
-        });
-
-        document.querySelector("#li_TotalCost").addEventListener('click', function (event) {
-            window.location.href = "/totalCost"
-        });
-
-        document.querySelector("#li_AvgCost").addEventListener('click', function (event) {
-            window.location.href = "/averageCost"
-        });
-
-        document.querySelector("#li_quantity").addEventListener('click', function (event) {
-            window.location.href = "/leftQuantity"
-        });
-
-        document.querySelector("#btnGetTotal").addEventListener('click', function (event) {
-            getTotal()
-        });
-
-        function getTotal(){
-            let date = document.querySelector("#tbPurchaseDate").value
-            let unit = document.querySelector("#selectPurchaseUnit").value
-            let type = document.querySelector("#selectPurchaseConsumable").value
-
-            json = JSON.stringify({"date":date, "unit": unit, "type": type})
-
-            if(!date)
-                alert("Error: Please insert a date")
-            else{
-                ajax_get("/averageCost", json, function(data){
-
-                    if(data === undefined || data.length == 0){
-                        document.querySelector("#totalCost").innerHTML = "Sorry, there's no average cost for this date!"
-                    } else if(data.result == "Failure"){
-                        alert("Error: can't delete this item")
-                    } else{
-                        document.querySelector("#totalCost").innerHTML = "average cost of " + type + " on " + date + " : " + data.avgCost + " $/"+unit
-                    }
-                })
-            }
         }
-    }
-</script>
+    </script>
 
-<body onload="load()">
-    <header>
-            <ul>
-                <li id="li_Home">
-                    <a>Home</a>
-                </li>
-                <li id="li_Inventory">
-                    <a>Inventory</a>
-                </li>
-                <li id="li_TotalCost">
-                    <a>Total cost</a>
-                </li>
-                <li id="li_AvgCost">
-                    <a>Average Acquisition cost</a>
-                </li>
-                <li id="li_quantity">
-                    <a>Left quantity</a>
-                </li>
-            </ul>
-    </header>
+    <body onload="load()">
+        <header>
+                <ul>
+                    <li id="li_Home">
+                        <a>Home</a>
+                    </li>
+                    <li id="li_Inventory">
+                        <a>Inventory</a>
+                    </li>
+                    <li id="li_TotalCost">
+                        <a>Total cost</a>
+                    </li>
+                    <li id="li_AvgCost">
+                        <a>Average Acquisition cost</a>
+                    </li>
+                    <li id="li_quantity">
+                        <a>Left quantity</a>
+                    </li>
+                </ul>
+        </header>
 
-    <h1>Average cost</h1>
+        <h1>Average cost</h1>
 
-    <label>Select the date, unit and the consumable category: </label><br><br>
+        <label>Select the date, unit and the consumable category: </label><br><br>
 
-    <label for="tbPurchaseDate">Date: </label><input type="text" id="tbPurchaseDate"><br>
-    <label for="selectPurchaseUnit">Unit: </label>
-    <select id="selectPurchaseUnit">
-        <option value="ml">ml</option>
-        <option value="g">g</option>
-    </select>
-    <label for="tbPurchaseItem">Item : Consumable - </label>
-    <select id="selectPurchaseConsumable">
-        <option value="HE">HE</option>
-        <option value="Base Oil">Base Oil</option>
-        <option value="Soap">Soap</option>
-        <option value="Additive">Additive</option>
-        <option value="Soude Caustique">Soude Caustique</option>
-        <option value="Emballage">Emballage</option>
-    </select>
-    <br>
-    <button type='button' id="btnGetTotal">Get total</button>
-    <br><br>
-    <div id="totalCost">
+        <label for="tbPurchaseDate">Date: </label><input type="text" id="tbPurchaseDate"><br>
+        <label for="selectPurchaseUnit">Unit: </label>
+        <select id="selectPurchaseUnit">
+            <option value="ml">ml</option>
+            <option value="g">g</option>
+        </select>
+        <label for="tbPurchaseItem">Item : Consumable - </label>
+        <select id="selectPurchaseConsumable">
+            <option value="HE">HE</option>
+            <option value="Base Oil">Base Oil</option>
+            <option value="Soap">Soap</option>
+            <option value="Additive">Additive</option>
+            <option value="Soude Caustique">Soude Caustique</option>
+            <option value="Emballage">Emballage</option>
+        </select>
+        <br>
+        <button type='button' id="btnGetAverage">Get average cost</button>
+        <br><br>
+        <div id="averageCost">
 
-    </div>
-</body>
+        </div>
+    </body>
 </html>

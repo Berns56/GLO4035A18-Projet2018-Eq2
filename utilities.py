@@ -1,4 +1,5 @@
 from jsonschema import validate, ValidationError
+import datetime
 
 ENCRYPTED_PASSWORD = "0192023a7bbd73250516f069df18b500"
 
@@ -80,14 +81,18 @@ SCHEMA_SOAP_LABOR = {
 }
 
 def dateFormat(p_dateToFormat):
-	try:
-		dateInProcess = p_dateToFormat.split(" ")
-		if len(dateInProcess) == 3:
-			dateInProcess[1] = convertStrMonthToStrMonthNumber(dateInProcess[1].upper())
-			dateInProcess[0] = convertStrDaytoStrDayNumber(dateInProcess[0])
-			return str(dateInProcess[2] + "-" + dateInProcess[1] + "-" + dateInProcess[0])
-	except Exception as e:
-		return str(e)
+    try:
+        datetime.datetime.strptime(p_dateToFormat, '%Y-%m-%d')
+        return p_dateToFormat
+    except ValueError:
+        try:
+            dateInProcess = p_dateToFormat.split(" ")
+            if len(dateInProcess) == 3:
+                dateInProcess[1] = convertStrMonthToStrMonthNumber(dateInProcess[1].upper())
+                dateInProcess[0] = convertStrDayToStrDayNumber(dateInProcess[0])
+                return str(dateInProcess[2] + "-" + dateInProcess[1] + "-" + dateInProcess[0])
+        except Exception as e:
+            return str(e)
 
 def convertStrMonthToStrMonthNumber(p_monthToConvert):
     return {
