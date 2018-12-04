@@ -68,24 +68,6 @@
             xmlhttp.send();
         }
 
-        function ajax_post(url, data, callback) {
-        let xhr = new XMLHttpRequest();
-        xhr.onreadystatechange = function () {
-            if (xhr.readyState === 4 && xhr.status === 200) {
-                try {
-                    callback(JSON.parse(xhr.responseText))
-                } catch(err) {
-                    console.log(err.message + " in " + xhr.responseText);
-                    return;
-                }
-            }
-        };
-        alert(url)
-        xhr.open("POST", url, true);
-        xhr.setRequestHeader("Content-Type", "application/json");
-        xhr.send(data);
-    }
-
         function load(){
 
             ajax_get('/transactions/purchases', function(data) {
@@ -137,136 +119,282 @@
                 }
                 else
                 {
-                    ajax_post("/totalCost", json, function(data){
-                        if(data == undefined || data.length == 0){
-                            document.querySelector("#averageCost").innerHTML = "Sorry, there's no data for this date!"
-                        } else if(data.result == "Failure"){
-                            alert("Error: can't display any data")
-                        } else{
-                            let purchasesArray = []
+                    let purchasesArray = []
 
-                            purchases.forEach(purchase => {
-                                if (purchase.date <= date && purchase.unit == unit && purchase.item.includes(type)){
-                                    purchasesArray.push(purchase)
-                                }
-                            })
-
-                            if (purchasesArray.length == 0){
-                                document.querySelector("#averageCost").innerHTML = "No result to display! Try again..."
-                            }
-                            else{
-                                purchasesArray.sort(function(a, b) {
-                                    if(a.item < b.item) { return -1; }
-                                    if(a.item > b.item) { return 1; }
-                                    return 0;
-                                }); 
-
-                                let html = []
-                                html.push("<table id=\"tableAverageCost\">")
-                                html.push("<tr><td class=\"tableTitle\" colspan='2'>" + date + "</td></tr>")
-                                html.push("<tr>")  
-                                html.push("<td class=\"title\">Type</td>")
-                                html.push("<td class=\"title\">Average value per acquisition unit (in ml)</td>")
-                                html.push("<td class=\"title\">Average value per acquisition unit (in L)</td>")
-                                html.push("<td class=\"title\">Average value per unit of use (per g)</td>")
-                                html.push("<td class=\"title\">Average value per unit of use (per 100g)</td>")
-                                html.push("</tr>") 
-                                
-                                let purchasesArrayWIP = []
-                                let oldPurchase = null
-                                let purIter = 0
-
-                                for (purIter = 0; purIter < purchasesArray.length; purIter++){
-                                    let currentPurchase = purchasesArray[purIter]
-                            
-                                    if (oldPurchase != null && oldPurchase.item.toLowerCase() == currentPurchase.item.toLowerCase()){
-                                        purchasesArrayWIP.push(currentPurchase);
-                                    }
-                                    else if (oldPurchase != null && oldPurchase.item.toLowerCase() != currentPurchase.item.toLowerCase()){
-                                        let currentItem = ""
-                                        let currentDensity = null
-                                        let laborsArray = []
-                                        
-                                        if (purchasesArrayWIP.length == 1){
-                                            let currentPurchaseWIP = purchasesArrayWIP[0]
-                                            let purchaseItemSplit = currentPurchaseWIP.item.split(" - ")
-
-                                            if (purchaseItemSplit.length == 2){
-                                                currentItem = purchaseItemSplit[1]
-                                            }
-                                            else if (purchaseItemSplit.length == 3){
-                                                currentItem = purchaseItemSplit[2]
-                                            }
-                                            
-                                            if (currentItem != ""){
-                                                labors.forEach(labor => {
-                                                    if ((labor.date >= currentPurchaseWIP.date && labor.date <= date) && labor.unit == unit && labor.item.includes(type) && labor.item.includes(currentItem)){
-                                                        laborsArray.push(labor)
-                                                    }
-                                                })
-                                            }
-                                            
-                                            if (laborsArray.length == 0){
-                                                let averageCost = currentPurchaseWIP.total / currentPurchaseWIP.qte
-
-                                                html.push("<tr>")  
-                                                html.push("<td class=\"center\">" + currentPurchaseWIP.item + "</td>")
-                                                html.push("<td class=\"center\">" + parseFloat(averageCost).toFixed(6) + " $</td>")
-                                                html.push("<td class=\"center\">" + parseFloat(averageCost * 1000).toFixed(2) + " $</td>")
-                                                html.push("<td class=\"center\"></td>")
-                                                html.push("<td class=\"center\"></td>")
-                                                html.push("</tr>")                               
-                                            }
-                                            else{
-                                                //currentDensity = densities.find(density => density.item.includes(type) && density.item.includes(currentItem))
-                                                
-                                                //if (currentDensity == null){
-                                                //    currentDensity = 1.0
-                                            // }
-                                                
-
-
-
-                                            }
-                                        }
-                                        else{
-                                            purchasesArrayWIP.sort(function(a, b) {
-                                                if(a.date < b.date) { return -1; }
-                                                if(a.date > b.date) { return 1; }
-                                                return 0;
-                                            }); 
-
-                                            let purIterWIP = 0
-
-                                            for (purIterWIP = 0; purIterWIP < purchasesArrayWIP.length; purIterWIP + 2){
-                                                let currentPurchaseWIP = purchasesArrayWIP[purIterWIP]
-                                                let nextPurchaseWIP = null
-
-                                                if ((purIterWIP + 1) < purchasesArrayWIP.length){
-                                                    nextPurchaseWIP = purchasesArrayWIP[purIterWIP + 1]
-                                                }
-
-                                                if (nextPurchaseWIP == null){
-
-                                                }
-                                            }
-                                        }
-                                    }
-
-                                    if (oldPurchase == null){
-                                        purchasesArrayWIP = []
-                                        purchasesArrayWIP.push(currentPurchase);
-                                    }
-
-                                    oldPurchase = currentPurchase
-                                }
-
-                                html.push("</table>")
-                                document.querySelector("#averageCost").innerHTML = ""
-                                document.querySelector("#averageCost").insertAdjacentHTML("beforeend", html.join("\n"))
-                            }
+                    purchases.forEach(purchase => {
+                        if (purchase.date <= date && purchase.unit == unit && purchase.item.includes(type)){
+                            purchasesArray.push(purchase)
                         }
                     })
+
+                    let html = []
+                    html.push("<table id=\"tableAverageCost\">")
+                    html.push("<tr><td class=\"tableTitle\" colspan='2'>" + date + "</td></tr>")
+                    html.push("<tr>")  
+                    html.push("<td class=\"title\">Type</td>")
+                    html.push("<td class=\"title\">Average value per<br>acquisition unit (in ml)</td>")
+                    html.push("<td class=\"title\">Average value per<br>acquisition unit (in L)</td>")
+                    html.push("<td class=\"title\">Average value per<br>unit of use (per g)</td>")
+                    html.push("<td class=\"title\">Average value per<br>unit of use (per 100g)</td>")
+                    html.push("</tr>")
+
+                    if (purchasesArray.length == 0){
+                        document.querySelector("#averageCost").innerHTML = "No result to display! Try again..."
+                    }
+                    else if (purchasesArray.length == 1){
+                        let currentItem = ""
+                        let currentDensity = null
+                        let laborsArray = []
+                        
+                        let currentPurchaseWIP = purchasesArray[0]
+                        let purchaseItemSplit = currentPurchaseWIP.item.split(" - ")
+
+                        if (purchaseItemSplit.length == 2){
+                            currentItem = purchaseItemSplit[1]
+                        }
+                        else if (purchaseItemSplit.length == 3){
+                            currentItem = purchaseItemSplit[2]
+                        }
+                        
+                        if (currentItem != ""){
+                            labors.forEach(labor => {
+                                if ((labor.date >= currentPurchaseWIP.date && labor.date <= date) && labor.unit == unit && labor.item.includes(type) && labor.item.includes(currentItem)){
+                                    laborsArray.push(labor)
+                                }
+                            })
+                        }
+
+                        if (laborsArray.length == 0){
+                            let averageCost = currentPurchaseWIP.total / currentPurchaseWIP.qte
+
+                            html.push("<tr>")  
+                            html.push("<td class=\"center\">" + currentPurchaseWIP.item + "</td>")
+                            html.push("<td class=\"center\">" + parseFloat(averageCost).toFixed(6) + " $</td>")
+                            html.push("<td class=\"center\">" + parseFloat(averageCost * 1000).toFixed(2) + " $</td>")
+                            html.push("<td class=\"center\"></td>")
+                            html.push("<td class=\"center\"></td>")
+                            html.push("</tr>")                               
+                        }
+                        else{
+                            let densityG = 1.0
+                            let densityML = 1.0
+                            let currentDensity = null
+                            currentDensity = densities.find(density => density.item.includes(type) && density.item.includes(currentItem))
+
+                            if (currentDensity != null){
+                                densityG = currentDensity.g
+                                densityML = currentDensity.ml
+                            }
+
+                            let sumLabors = 0.0
+
+                            laborsArray.forEach(labor => {
+                                sumLabors += labor.qte
+                            })
+
+                            let averageCost = currentPurchaseWIP.total / currentPurchaseWIP.qte
+                            let averageUseCost = averageCost / (densityG / densityML)
+
+                            html.push("<tr>")  
+                            html.push("<td class=\"center\">" + currentPurchaseWIP.item + "</td>")
+                            html.push("<td class=\"center\">" + parseFloat(averageCost).toFixed(6) + " $</td>")
+                            html.push("<td class=\"center\">" + parseFloat(averageCost * 1000).toFixed(2) + " $</td>")
+                            html.push("<td class=\"center\">" + parseFloat().toFixed(6) + " $</td>")
+                            html.push("<td class=\"center\">" + parseFloat(averageUseCost * 100).toFixed(2) + " $</td>")
+                            html.push("</tr>")
+                        }
+                            
+                        html.push("</table>")
+                        document.querySelector("#averageCost").innerHTML = ""
+                        document.querySelector("#averageCost").insertAdjacentHTML("beforeend", html.join("\n"))
+                    }
+                    else{
+                        purchasesArray.sort(function(a, b) {
+                            if(a.item < b.item) { return -1; }
+                            if(a.item > b.item) { return 1; }
+                            return 0;
+                        }); 
+
+                        let purchasesArrayWIP = []
+                        let oldPurchase = null
+                        let purIter = 0
+
+                        for (purIter = 0; purIter < purchasesArray.length; purIter++){
+                            let currentPurchase = purchasesArray[purIter]
+                    
+                            if (oldPurchase != null && oldPurchase.item.toLowerCase() == currentPurchase.item.toLowerCase()){
+                                purchasesArrayWIP.push(currentPurchase);
+                            }
+                            else if (oldPurchase != null && oldPurchase.item.toLowerCase() != currentPurchase.item.toLowerCase()){
+                                let currentItem = ""
+                                let currentDensity = null
+                                let laborsArray = []
+                                
+                                if (purchasesArrayWIP.length == 1){
+                                    let currentPurchaseWIP = purchasesArrayWIP[0]
+                                    let purchaseItemSplit = currentPurchaseWIP.item.split(" - ")
+
+                                    if (purchaseItemSplit.length == 2){
+                                        currentItem = purchaseItemSplit[1]
+                                    }
+                                    else if (purchaseItemSplit.length == 3){
+                                        currentItem = purchaseItemSplit[2]
+                                    }
+                                    
+                                    if (currentItem != ""){
+                                        labors.forEach(labor => {
+                                            if ((labor.date >= currentPurchaseWIP.date && labor.date <= date) && labor.unit == unit && labor.item.includes(type) && labor.item.includes(currentItem)){
+                                                laborsArray.push(labor)
+                                            }
+                                        })
+                                    }
+
+                                    if (laborsArray.length == 0){
+                                        let averageCost = currentPurchaseWIP.total / currentPurchaseWIP.qte
+
+                                        html.push("<tr>")  
+                                        html.push("<td class=\"center\">" + currentPurchaseWIP.item + "</td>")
+                                        html.push("<td class=\"center\">" + parseFloat(averageCost).toFixed(6) + " $</td>")
+                                        html.push("<td class=\"center\">" + parseFloat(averageCost * 1000).toFixed(2) + " $</td>")
+                                        html.push("<td class=\"center\"></td>")
+                                        html.push("<td class=\"center\"></td>")
+                                        html.push("</tr>")                               
+                                    }
+                                    else{
+                                        let densityG = 1.0
+                                        let densityML = 1.0
+                                        let currentDensity = null
+                                        currentDensity = densities.find(density => density.item.includes(type) && density.item.includes(currentItem))
+
+                                        if (currentDensity != null){
+                                            densityG = currentDensity.g
+                                            densityML = currentDensity.ml
+                                        }
+
+                                        let sumLabors = 0.0
+
+                                        laborsArray.forEach(labor => {
+                                            sumLabors += labor.qte
+                                        })
+
+                                        let averageCost = currentPurchaseWIP.total / currentPurchaseWIP.qte
+                                        let averageUseCost = averageCost / (densityG / densityML)
+
+                                        html.push("<tr>")  
+                                        html.push("<td class=\"center\">" + currentPurchaseWIP.item + "</td>")
+                                        html.push("<td class=\"center\">" + parseFloat(averageCost).toFixed(6) + " $</td>")
+                                        html.push("<td class=\"center\">" + parseFloat(averageCost * 1000).toFixed(2) + " $</td>")
+                                        html.push("<td class=\"center\">" + parseFloat().toFixed(6) + " $</td>")
+                                        html.push("<td class=\"center\">" + parseFloat(averageUseCost * 100).toFixed(2) + " $</td>")
+                                        html.push("</tr>")
+                                    }
+                                }
+                                else{
+                                    purchasesArrayWIP.sort(function(a, b) {
+                                        if(a.date < b.date) { return -1; }
+                                        if(a.date > b.date) { return 1; }
+                                        return 0;
+                                    }); 
+
+                                    let purIterWIP = 0
+
+                                    for (purIterWIP = 0; purIterWIP < purchasesArrayWIP.length; purIterWIP + 2){
+                                        let currentPurchaseWIP = purchasesArrayWIP[purIterWIP]
+                                        let nextPurchaseWIP = null
+
+                                        if ((purIterWIP + 1) < purchasesArrayWIP.length){
+                                            nextPurchaseWIP = purchasesArrayWIP[purIterWIP + 1]
+                                        }
+
+                                        if (nextPurchaseWIP == null){
+
+                                        }
+                                    }
+                                }
+
+                                oldPurchase = null
+                            }
+                            else if (oldPurchase == null && (purIter + 1) >= purchasesArray.length){
+                                purchasesArrayWIP = []
+                                purchasesArrayWIP.push(currentPurchase);
+
+                                let currentItem = ""
+                                let currentDensity = null
+                                let laborsArray = []
+                                
+                                if (purchasesArrayWIP.length == 1){
+                                    let currentPurchaseWIP = purchasesArrayWIP[0]
+                                    let purchaseItemSplit = currentPurchaseWIP.item.split(" - ")
+
+                                    if (purchaseItemSplit.length == 2){
+                                        currentItem = purchaseItemSplit[1]
+                                    }
+                                    else if (purchaseItemSplit.length == 3){
+                                        currentItem = purchaseItemSplit[2]
+                                    }
+                                    
+                                    if (currentItem != ""){
+                                        labors.forEach(labor => {
+                                            if ((labor.date >= currentPurchaseWIP.date && labor.date <= date) && labor.unit == unit && labor.item.includes(type) && labor.item.includes(currentItem)){
+                                                laborsArray.push(labor)
+                                            }
+                                        })
+                                    }
+
+                                    if (laborsArray.length == 0){
+                                        let averageCost = currentPurchaseWIP.total / currentPurchaseWIP.qte
+
+                                        html.push("<tr>")  
+                                        html.push("<td class=\"center\">" + currentPurchaseWIP.item + "</td>")
+                                        html.push("<td class=\"center\">" + parseFloat(averageCost).toFixed(6) + " $</td>")
+                                        html.push("<td class=\"center\">" + parseFloat(averageCost * 1000).toFixed(2) + " $</td>")
+                                        html.push("<td class=\"center\"></td>")
+                                        html.push("<td class=\"center\"></td>")
+                                        html.push("</tr>")                               
+                                    }
+                                    else{
+                                        let densityG = 1.0
+                                        let densityML = 1.0
+                                        let currentDensity = null
+                                        currentDensity = densities.find(density => density.item.includes(type) && density.item.includes(currentItem))
+
+                                        if (currentDensity != null){
+                                            densityG = currentDensity.g
+                                            densityML = currentDensity.ml
+                                        }
+
+                                        let sumLabors = 0.0
+
+                                        laborsArray.forEach(labor => {
+                                            sumLabors += labor.qte
+                                        })
+
+                                        let averageCost = currentPurchaseWIP.total / currentPurchaseWIP.qte
+                                        let averageUseCost = averageCost / (densityG / densityML)
+
+                                        html.push("<tr>")  
+                                        html.push("<td class=\"center\">" + currentPurchaseWIP.item + "</td>")
+                                        html.push("<td class=\"center\">" + parseFloat(averageCost).toFixed(6) + " $</td>")
+                                        html.push("<td class=\"center\">" + parseFloat(averageCost * 1000).toFixed(2) + " $</td>")
+                                        html.push("<td class=\"center\">" + parseFloat().toFixed(6) + " $</td>")
+                                        html.push("<td class=\"center\">" + parseFloat(averageUseCost * 100).toFixed(2) + " $</td>")
+                                        html.push("</tr>")
+                                    }
+                                }
+                            }
+
+                            if (oldPurchase == null){
+                                purchasesArrayWIP = []
+                                purchasesArrayWIP.push(currentPurchase);
+                            }
+
+                            oldPurchase = currentPurchase
+                        }
+
+                        html.push("</table>")
+                        document.querySelector("#averageCost").innerHTML = ""
+                        document.querySelector("#averageCost").insertAdjacentHTML("beforeend", html.join("\n"))
+                    }
                 }
             }
         }

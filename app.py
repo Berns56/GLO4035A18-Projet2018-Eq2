@@ -230,10 +230,6 @@ def totalCostPurchase():
 def display_averageCostHtml():
     return send_from_directory('/templates', 'averageCost.html')
 
-@application.route("/averageCost", methods=["POST"])
-def averageCostPurchase():
-    return jsonify(result="Success", status="200", message="Average cost calculated!"), 200
-
 @application.route("/leftQuantity", methods=["GET"])
 def display_quantityLeftHtml():
     return send_from_directory('/templates', 'leftQuantity.html')
