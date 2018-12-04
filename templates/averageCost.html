@@ -68,22 +68,23 @@
             xmlhttp.send();
         }
 
-        function postAjax(url, data, callback) {
-            let xhr = new XMLHttpRequest();
-            xhr.onreadystatechange = function () {
-                if (xhr.readyState === 4 && xhr.status === 200) {
-                    try {
-                        callback(JSON.parse(xhr.responseText))
-                    } catch(err) {
-                        console.log(err.message + " in " + xhr.responseText);
-                        return;
-                    }
+        function ajax_post(url, data, callback) {
+        let xhr = new XMLHttpRequest();
+        xhr.onreadystatechange = function () {
+            if (xhr.readyState === 4 && xhr.status === 200) {
+                try {
+                    callback(JSON.parse(xhr.responseText))
+                } catch(err) {
+                    console.log(err.message + " in " + xhr.responseText);
+                    return;
                 }
-            };
-            xhr.open("POST", url, true);
-            xhr.setRequestHeader("Content-Type", "application/json");
-            xhr.send(data);
-        }
+            }
+        };
+        alert(url)
+        xhr.open("POST", url, true);
+        xhr.setRequestHeader("Content-Type", "application/json");
+        xhr.send(data);
+    }
 
         function load(){
 
@@ -136,22 +137,134 @@
                 }
                 else
                 {
-                    document.querySelector("#averageCost").innerHTML = "Loading..."
-
-                    alert(purchases.length)
-                    let purchasesArray = []
-                    purchasesArray = purchases.find(p => p.date <= date)
-                    alert("t2")
-                    alert(purchasesArray)
-
-                    ajax_get("/averageCost", json, function(data){
-                        if(data === undefined || data.length == 0){
-                            alert("TEST")
-                            document.querySelector("#totalCost").innerHTML = "Sorry, there's no average cost for this date!"
+                    ajax_post("/totalCost", json, function(data){
+                        if(data == undefined || data.length == 0){
+                            document.querySelector("#averageCost").innerHTML = "Sorry, there's no data for this date!"
                         } else if(data.result == "Failure"){
-                            alert("Error: can't delete this item")
+                            alert("Error: can't display any data")
                         } else{
-                            document.querySelector("#averageCost").innerHTML = "average cost of " + type + " on " + date + " : " + data.avgCost + " $/"+unit
+                            let purchasesArray = []
+
+                            purchases.forEach(purchase => {
+                                if (purchase.date <= date && purchase.unit == unit && purchase.item.includes(type)){
+                                    purchasesArray.push(purchase)
+                                }
+                            })
+
+                            if (purchasesArray.length == 0){
+                                document.querySelector("#averageCost").innerHTML = "No result to display! Try again..."
+                            }
+                            else{
+                                purchasesArray.sort(function(a, b) {
+                                    if(a.item < b.item) { return -1; }
+                                    if(a.item > b.item) { return 1; }
+                                    return 0;
+                                }); 
+
+                                let html = []
+                                html.push("<table id=\"tableAverageCost\">")
+                                html.push("<tr><td class=\"tableTitle\" colspan='2'>" + date + "</td></tr>")
+                                html.push("<tr>")  
+                                html.push("<td class=\"title\">Type</td>")
+                                html.push("<td class=\"title\">Average value per acquisition unit (in ml)</td>")
+                                html.push("<td class=\"title\">Average value per acquisition unit (in L)</td>")
+                                html.push("<td class=\"title\">Average value per unit of use (per g)</td>")
+                                html.push("<td class=\"title\">Average value per unit of use (per 100g)</td>")
+                                html.push("</tr>") 
+                                
+                                let purchasesArrayWIP = []
+                                let oldPurchase = null
+                                let purIter = 0
+
+                                for (purIter = 0; purIter < purchasesArray.length; purIter++){
+                                    let currentPurchase = purchasesArray[purIter]
+                            
+                                    if (oldPurchase != null && oldPurchase.item.toLowerCase() == currentPurchase.item.toLowerCase()){
+                                        purchasesArrayWIP.push(currentPurchase);
+                                    }
+                                    else if (oldPurchase != null && oldPurchase.item.toLowerCase() != currentPurchase.item.toLowerCase()){
+                                        let currentItem = ""
+                                        let currentDensity = null
+                                        let laborsArray = []
+                                        
+                                        if (purchasesArrayWIP.length == 1){
+                                            let currentPurchaseWIP = purchasesArrayWIP[0]
+                                            let purchaseItemSplit = currentPurchaseWIP.item.split(" - ")
+
+                                            if (purchaseItemSplit.length == 2){
+                                                currentItem = purchaseItemSplit[1]
+                                            }
+                                            else if (purchaseItemSplit.length == 3){
+                                                currentItem = purchaseItemSplit[2]
+                                            }
+                                            
+                                            if (currentItem != ""){
+                                                labors.forEach(labor => {
+                                                    if ((labor.date >= currentPurchaseWIP.date && labor.date <= date) && labor.unit == unit && labor.item.includes(type) && labor.item.includes(currentItem)){
+                                                        laborsArray.push(labor)
+                                                    }
+                                                })
+                                            }
+                                            
+                                            if (laborsArray.length == 0){
+                                                let averageCost = currentPurchaseWIP.total / currentPurchaseWIP.qte
+
+                                                html.push("<tr>")  
+                                                html.push("<td class=\"center\">" + currentPurchaseWIP.item + "</td>")
+                                                html.push("<td class=\"center\">" + parseFloat(averageCost).toFixed(6) + " $</td>")
+                                                html.push("<td class=\"center\">" + parseFloat(averageCost * 1000).toFixed(2) + " $</td>")
+                                                html.push("<td class=\"center\"></td>")
+                                                html.push("<td class=\"center\"></td>")
+                                                html.push("</tr>")                               
+                                            }
+                                            else{
+                                                //currentDensity = densities.find(density => density.item.includes(type) && density.item.includes(currentItem))
+                                                
+                                                //if (currentDensity == null){
+                                                //    currentDensity = 1.0
+                                            // }
+                                                
+
+
+
+                                            }
+                                        }
+                                        else{
+                                            purchasesArrayWIP.sort(function(a, b) {
+                                                if(a.date < b.date) { return -1; }
+                                                if(a.date > b.date) { return 1; }
+                                                return 0;
+                                            }); 
+
+                                            let purIterWIP = 0
+
+                                            for (purIterWIP = 0; purIterWIP < purchasesArrayWIP.length; purIterWIP + 2){
+                                                let currentPurchaseWIP = purchasesArrayWIP[purIterWIP]
+                                                let nextPurchaseWIP = null
+
+                                                if ((purIterWIP + 1) < purchasesArrayWIP.length){
+                                                    nextPurchaseWIP = purchasesArrayWIP[purIterWIP + 1]
+                                                }
+
+                                                if (nextPurchaseWIP == null){
+
+                                                }
+                                            }
+                                        }
+                                    }
+
+                                    if (oldPurchase == null){
+                                        purchasesArrayWIP = []
+                                        purchasesArrayWIP.push(currentPurchase);
+                                    }
+
+                                    oldPurchase = currentPurchase
+                                }
+
+                                html.push("</table>")
+                                document.querySelector("#averageCost").innerHTML = ""
+                                document.querySelector("#averageCost").insertAdjacentHTML("beforeend", html.join("\n"))
+                            }
                         }
                     })
                 }
