@@ -11,15 +11,15 @@
         display: flex;
         width: 100%;
     }
-
+    
     header ul {
         width: 100%;
     }
-
+    
     header li {
         display: inline;
     }
-
+    
     header li a {
         width: 100%;
         background-color: #ccffff;
@@ -28,20 +28,35 @@
         color:black;
         size: 15px;
     }
-
+    
     header li a:hover {
         background: #cc0000;
         text-decoration: underline ;
         cursor: pointer;
     }
-
-
+    
+    
     button {
         margin-bottom: 10px;
     }
-
+    
     label, input, select {
         margin-bottom: 15px;
+    }
+    
+    #tableTotalCost{
+        margin-bottom: 30px;
+        width: 30%;
+        border-collapse: collapse;
+    }
+    
+    td{
+        border: 1px solid #777;
+    }
+    
+    .tableTitle, .title{
+        text-align: center;
+        font-weight: bold;
     }
     </style>
 
@@ -129,7 +144,7 @@
 
                     let html = []
                     html.push("<table id=\"tableAverageCost\">")
-                    html.push("<tr><td class=\"tableTitle\" colspan='2'>" + date + "</td></tr>")
+                    html.push("<tr><td class=\"tableTitle\" colspan='5'>" + date + "</td></tr>")
                     html.push("<tr>")  
                     html.push("<td class=\"title\">Type</td>")
                     html.push("<td class=\"title\">Average value per<br>acquisition unit (in ml)</td>")
@@ -199,7 +214,7 @@
                             html.push("<td class=\"center\">" + currentPurchaseWIP.item + "</td>")
                             html.push("<td class=\"center\">" + parseFloat(averageCost).toFixed(6) + " $</td>")
                             html.push("<td class=\"center\">" + parseFloat(averageCost * 1000).toFixed(2) + " $</td>")
-                            html.push("<td class=\"center\">" + parseFloat().toFixed(6) + " $</td>")
+                            html.push("<td class=\"center\">" + parseFloat(averageUseCost).toFixed(6) + " $</td>")
                             html.push("<td class=\"center\">" + parseFloat(averageUseCost * 100).toFixed(2) + " $</td>")
                             html.push("</tr>")
                         }
@@ -284,7 +299,7 @@
                                         html.push("<td class=\"center\">" + currentPurchaseWIP.item + "</td>")
                                         html.push("<td class=\"center\">" + parseFloat(averageCost).toFixed(6) + " $</td>")
                                         html.push("<td class=\"center\">" + parseFloat(averageCost * 1000).toFixed(2) + " $</td>")
-                                        html.push("<td class=\"center\">" + parseFloat().toFixed(6) + " $</td>")
+                                        html.push("<td class=\"center\">" + parseFloat(averageUseCost).toFixed(6) + " $</td>")
                                         html.push("<td class=\"center\">" + parseFloat(averageUseCost * 100).toFixed(2) + " $</td>")
                                         html.push("</tr>")
                                     }
@@ -296,18 +311,124 @@
                                         return 0;
                                     }); 
 
-                                    let purIterWIP = 0
+                                    if (purchasesArrayWIP.length > 0){
+                                        let puchaseTempStart = purchasesArrayWIP[0]
+                                        let purchaseItemSplit = puchaseTempStart.item.split(" - ")
 
-                                    for (purIterWIP = 0; purIterWIP < purchasesArrayWIP.length; purIterWIP + 2){
-                                        let currentPurchaseWIP = purchasesArrayWIP[purIterWIP]
-                                        let nextPurchaseWIP = null
-
-                                        if ((purIterWIP + 1) < purchasesArrayWIP.length){
-                                            nextPurchaseWIP = purchasesArrayWIP[purIterWIP + 1]
+                                        if (purchaseItemSplit.length == 2){
+                                            currentItem = purchaseItemSplit[1]
+                                        }
+                                        else if (purchaseItemSplit.length == 3){
+                                            currentItem = purchaseItemSplit[2]
                                         }
 
-                                        if (nextPurchaseWIP == null){
+                                        if (currentItem != ""){
+                                            labors.forEach(labor => {
+                                                if ((labor.date >= puchaseTempStart.date && labor.date <= date) && labor.unit == unit && labor.item.includes(type) && labor.item.includes(currentItem)){
+                                                    laborsArray.push(labor)
+                                                }
+                                            })
+                                        }
 
+                                        if (laborsArray.length == 0){
+                                            let totalCost = 0.0
+                                            let totalQte = 0.0
+
+                                            purchasesArrayWIP.forEach(purchase => {
+                                                totalCost += purchase.total
+                                                totalQte += purchase.qte
+                                            })
+
+                                            if (totalCost > 0.0 && totalQte > 0.0){
+                                                let averageCost = totalCost / totalQte
+
+                                                html.push("<tr>")  
+                                                html.push("<td class=\"center\">" + puchaseTempStart.item + "</td>")
+                                                html.push("<td class=\"center\">" + parseFloat(averageCost).toFixed(6) + " $</td>")
+                                                html.push("<td class=\"center\">" + parseFloat(averageCost * 1000).toFixed(2) + " $</td>")
+                                                html.push("<td class=\"center\"></td>")
+                                                html.push("<td class=\"center\"></td>")
+                                                html.push("</tr>")  
+                                            }
+                                        }
+                                        else{
+                                            let densityG = 1.0
+                                            let densityML = 1.0
+                                            let currentDensity = null
+                                            currentDensity = densities.find(density => density.item.includes(type) && density.item.includes(currentItem))
+
+                                            if (currentDensity != null){
+                                                densityG = currentDensity.g
+                                                densityML = currentDensity.ml
+                                            }
+
+                                            let purIterWIP = 0
+
+                                            for (purIterWIP = 0; purIterWIP < purchasesArrayWIP.length; purIterWIP = purIterWIP + 2){
+                                                //let currentPurchaseWIP = purchasesArrayWIP[purIterWIP]
+                                                //let nextPurchaseWIP = null
+
+                                                //if ((purIterWIP + 1) < purchasesArrayWIP.length){
+                                                //    nextPurchaseWIP = purchasesArrayWIP[purIterWIP + 1]
+                                                //}
+
+                                                /*if (nextPurchaseWIP != null){
+                                                    if (laborsArray.length == 1){
+                                                        let laborWIP = laborsArray[0]
+
+                                                        if (laborWIP.date >= nextPurchaseWIP.date){
+                                                            purchasesArrayWIP.forEach(purchase => {
+                                                                totalCost += purchase.total
+                                                                totalQte += purchase.qte
+                                                            })
+
+                                                            let averageCost = totalCost / totalQte
+                                                            let averageUseCost = averageCost / (densityG / densityML)
+
+                                                            html.push("<tr>")  
+                                                            html.push("<td class=\"center\">" + currentPurchaseWIP.item + "</td>")
+                                                            html.push("<td class=\"center\">" + parseFloat(averageCost).toFixed(6) + " $</td>")
+                                                            html.push("<td class=\"center\">" + parseFloat(averageCost * 1000).toFixed(2) + " $</td>")
+                                                            html.push("<td class=\"center\">" + parseFloat(averageUseCost).toFixed(6) + " $</td>")
+                                                            html.push("<td class=\"center\">" + parseFloat(averageUseCost * 100).toFixed(2) + " $</td>")
+                                                            html.push("</tr>")
+                                                        }
+                                                        /*else if (currentPurchaseWIP.date <= laborWIP.date && nextPurchaseWIP.date >= laborWIP.date){
+                                                            purchasesArrayWIP.forEach(purchase => {
+                                                                totalQte += (purchase.qte - (laborWIP.qte / (densityG / densityML)))
+                                                                totalCost += (totalQte * (purchase.total / purchase.qte))
+                                                            })
+
+                                                            let averageCost = totalCost / totalQte
+                                                            let averageUseCost = averageCost / (densityG / densityML)
+
+                                                            html.push("<tr>")  
+                                                            html.push("<td class=\"center\">" + currentPurchaseWIP.item + "</td>")
+                                                            html.push("<td class=\"center\">" + parseFloat(averageCost).toFixed(6) + " $</td>")
+                                                            html.push("<td class=\"center\">" + parseFloat(averageCost * 1000).toFixed(2) + " $</td>")
+                                                            html.push("<td class=\"center\">" + parseFloat(averageUseCost).toFixed(6) + " $</td>")
+                                                            html.push("<td class=\"center\">" + parseFloat(averageUseCost * 100).toFixed(2) + " $</td>")
+                                                            html.push("</tr>")
+                                                        }
+                                                        else if (laborWIP.qte >= currentPurchaseWIP.qte){
+                                                            // CASE 4                                                        
+                                                            alert("ETytuyS")
+
+                                                        }*/
+                                                //    }
+                                                    //else{
+                                                       // alert("ETS")
+                                                    //}
+
+
+
+
+                                               // }*/
+
+
+
+
+                                            }
                                         }
                                     }
                                 }
@@ -376,7 +497,7 @@
                                         html.push("<td class=\"center\">" + currentPurchaseWIP.item + "</td>")
                                         html.push("<td class=\"center\">" + parseFloat(averageCost).toFixed(6) + " $</td>")
                                         html.push("<td class=\"center\">" + parseFloat(averageCost * 1000).toFixed(2) + " $</td>")
-                                        html.push("<td class=\"center\">" + parseFloat().toFixed(6) + " $</td>")
+                                        html.push("<td class=\"center\">" + parseFloat(averageUseCost).toFixed(6) + " $</td>")
                                         html.push("<td class=\"center\">" + parseFloat(averageUseCost * 100).toFixed(2) + " $</td>")
                                         html.push("</tr>")
                                     }
@@ -443,6 +564,7 @@
         <br>
         <button type='button' id="btnGetAverage">Get average cost</button>
         <br><br>
+        <label>N.B. If there's no density factor for an item, the g/ml factor will be 1 g/ml</label><br><br>
         <div id="averageCost">
 
         </div>
